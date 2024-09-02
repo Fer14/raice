@@ -4,7 +4,7 @@
 (STILL ON DEVELOPMENT)
 
 <p align="center">
-  <img src="./logos/big.png" width="500" />
+  <img src="./logos/big.png" width="700" />
 </p>
 
 
@@ -15,7 +15,10 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 
 ## CURRENT ALGORITHMS STANDINGS
 
-![logo](logos/table.png)
+
+<p align="center">
+  <img src="./logos/table.png" width="700" />
+</p>
 
 ## CURRENT MAPS
 
