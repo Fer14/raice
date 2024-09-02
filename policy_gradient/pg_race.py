@@ -49,7 +49,7 @@ class PGRace(Race):
         for episode in range(1, episodes + 1):
 
             current_state = car.get_data()
-            states, actions, rewards = [], [], []
+            states, rewards = [], []
 
             done = False
             episode_reward = 0
@@ -62,11 +62,10 @@ class PGRace(Race):
                         quit()
                         sys.exit()
 
-                action = car.action(current_state)
+                car.action(current_state)
                 car.update(self.game_map)
                 new_state, reward, done = self.step(car)
                 states.append(current_state)
-                actions.append(action)
                 rewards.append(reward)
                 episode_reward += reward
 
