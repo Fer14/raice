@@ -21,7 +21,7 @@ class QRace(Race):
         done = not car.is_alive()
         return new_state, reward, done
 
-    def training_race(self, car: QCar, episodes, train_every):
+    def training_race(self, car: QCar, episodes):
 
         clock = pygame.time.Clock()
 
@@ -49,9 +49,9 @@ class QRace(Race):
                 self.draw([car], draw_radar=True)
                 car.update_replay_memory(current_state, action, reward, new_state, done)
 
-            if episode % train_every == 0:
                 loss = car.train()
+
             if episode % 100 == 0:
                 print(
-                    f"Episode {episode}, Mean Episode Reward: {episode_reward/train_every:.2f}, Loss: {loss:.4f} "
+                    f"Episode {episode}, Mean Episode Reward: {episode_reward/100:.2f}, Loss: {loss:.4f} "
                 )

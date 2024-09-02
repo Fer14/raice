@@ -6,7 +6,6 @@ from q_race import QRace
 def main():
 
     episodes = 200000
-    train_every = 1
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Detected device: ", device)
@@ -15,7 +14,7 @@ def main():
     car = QCar(position=race.start, device=device)
 
     try:
-        race.training_race(car, episodes=episodes, train_every=train_every)
+        race.training_race(car, episodes=episodes)
     except KeyboardInterrupt:
         print("Training interrupted. Saving current car...")
         car.save()

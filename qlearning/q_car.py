@@ -42,7 +42,7 @@ class QCar(Car):
         discount_factor=0.99,
         learning_rate=1e-3,
         mini_batch_size=32,
-        update_target_every=100,  # 100
+        update_target_every=100,
     ):
         super().__init__(position=position, angle=0)
         self.device = device
