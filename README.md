@@ -17,7 +17,7 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 
 
 <p align="center">
-  <img src="./logos/table.png" width="700" />
+  <img src="./logos/table.png" width="600" />
 </p>
 
 ## CURRENT MAPS
