@@ -7,6 +7,8 @@ import pygame
 from collections import deque
 import random
 
+# from prioritized_replay_buffer import PrioritizedReplayBuffer
+
 # Add this at the top of the file
 import sys
 from pathlib import Path
@@ -24,10 +26,10 @@ HEIGHT = 1080
 
 BORDER_COLOR = (255, 255, 255, 255)  # Color To Crash on Hit
 
-REPLAY_MEMORY_SIZE = 20000
+REPLAY_MEMORY_SIZE = 50000
 MIN_REPLAY_MEMORY_SIZE = 1000
-MIN_EPSILON = 0.01
-EPSILON_DECAY = 0.9995
+MIN_EPSILON = 0.1
+EPSILON_DECAY = 0.995
 
 
 class QCar(Car):
@@ -35,14 +37,14 @@ class QCar(Car):
     def __init__(
         self,
         position=None,
-        device="gpu",
+        device="cuda",
         input_size=5,
-        hidden_size=5,
+        hidden_size=5,  # TODO BAJARLE COMPLEJIDAD
         output_size=4,
         discount_factor=0.99,
         learning_rate=1e-3,
-        mini_batch_size=32,
-        update_target_every=100,
+        mini_batch_size=64,
+        update_target_every=40,  # 150
     ):
         super().__init__(position=position, angle=0)
         self.device = device
@@ -58,6 +60,7 @@ class QCar(Car):
 
         # An array with last n steps for training
         self.replay_memory = deque(maxlen=REPLAY_MEMORY_SIZE)
+        # self.replay_buffer = PrioritizedReplayBuffer(REPLAY_MEMORY_SIZE)
 
         # Used to count when to update target network with main network's weights
         self.target_update_counter = 0
@@ -73,6 +76,7 @@ class QCar(Car):
         self.rotated_sprite = self.sprite
 
         self.crashed = False
+        self.last_position = self.position
 
     def create_model(self, input_size, hidden_size, output_size, trainable=True):
         model = nn.Sequential(
@@ -94,6 +98,7 @@ class QCar(Car):
 
     def update_replay_memory(self, state, action, reward, new_state, done):
         self.replay_memory.append((state, action, reward, new_state, done))
+        # self.replay_buffer.push(state, action, reward, new_state, done)
 
     def get_qs(self, state):
         return self.model(state).cpu().detach().numpy()
@@ -105,6 +110,10 @@ class QCar(Car):
         else:
             return int(np.argmax(self.get_qs(state)))
 
+    def act_race(self, state):
+        state = torch.tensor(np.array(state), dtype=torch.float32).to(self.device)
+        return int(np.argmax(self.get_qs(state)))
+
     def epsilon_decay(self):
         if self.epsilon > MIN_EPSILON:
             self.epsilon *= EPSILON_DECAY
@@ -113,27 +122,27 @@ class QCar(Car):
     def save(self):
         torch.save(self.model.state_dict(), "./qlearning/qpolicy.pth")
 
+    def load(self):
+        self.model.load_state_dict(torch.load("./qlearning/best2.pth"))
+
     def train(self):
         if len(self.replay_memory) < MIN_REPLAY_MEMORY_SIZE:
             return
 
         mini_batch = random.sample(self.replay_memory, self.mini_batch_size)
+        # mini_batch, indices, weights = self.replay_buffer.sample(self.mini_batch_size)
 
         states, actions, rewards, new_states, dones = zip(*mini_batch)
 
-        # Convert to numpy arrays first
-        states = np.array(states)
-        actions = np.array(actions)
-        rewards = np.array(rewards)
-        new_states = np.array(new_states)
-        dones = np.array(dones)
-
         # Convert to PyTorch tensors
-        states = torch.tensor(states, dtype=torch.float32).to(self.device)
-        actions = torch.tensor(actions, dtype=torch.long).to(self.device)
-        rewards = torch.tensor(rewards, dtype=torch.float32).to(self.device)
-        new_states = torch.tensor(new_states, dtype=torch.float32).to(self.device)
-        dones = torch.tensor(dones, dtype=torch.float32).to(self.device)
+        states = torch.tensor(np.array(states), dtype=torch.float32).to(self.device)
+        actions = torch.tensor(np.array(actions), dtype=torch.long).to(self.device)
+        rewards = torch.tensor(np.array(rewards), dtype=torch.float32).to(self.device)
+        new_states = torch.tensor(np.array(new_states), dtype=torch.float32).to(
+            self.device
+        )
+        dones = torch.tensor(np.array(dones), dtype=torch.float32).to(self.device)
+        # weights = torch.tensor(np.array(weights), dtype=torch.float32).to(self.device)
 
         # Compute Q values
         current_q_values = self.model(states).gather(1, actions.unsqueeze(1)).squeeze(1)
@@ -141,9 +150,14 @@ class QCar(Car):
         target_q_values = rewards + self.discount_factor * next_q_values * (1 - dones)
 
         loss = nn.MSELoss()(current_q_values, target_q_values)
+        # loss = torch.mean(loss)
+
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+
+        # td_errors = (target_q_values - current_q_values).detach().cpu().numpy()
+        # self.replay_buffer.update_priorities(indices, td_errors)
 
         self.update_target_network()
         self.epsilon_decay()
@@ -168,8 +182,9 @@ class QCar(Car):
         self.speed = 0
         self.angle = 0
         self.distance = 0
+        self.last_position = self.position
 
-    def action(self, state):
+    def action_train(self, state):
 
         action = self.act_epsilon_greedy(state)
 
@@ -185,16 +200,41 @@ class QCar(Car):
 
         return action
 
+    def action(self):
+
+        state = self.get_data()
+
+        action = self.act_race(state)
+
+        if action == 0:
+            self.angle += 5  # Left
+        elif action == 1:
+            self.angle -= 5  # Right
+        elif action == 2:
+            if self.speed - 2 >= 6:
+                self.speed -= 2  # Slow Down
+        else:
+            self.speed += 2  # Speed Up
+
+        return action
+
     def get_reward(self):
         if self.crashed:
             self.crashed = False
-            return -100
+            return -1000
 
         # Calculate reward based on distance and velocity
+        distance_traveled = np.linalg.norm(
+            np.array(self.position) - np.array(self.last_position)
+        )
         distance_reward = self.distance / (CAR_SIZE_X / 2)
-        velocity_reward = self.speed  # Assuming max speed is 20, adjust as needed
+        velocity_reward = self.speed
 
         # Combine the rewards (you can adjust the weights)
-        total_reward = 0.7 * distance_reward + 0.3 * velocity_reward
+        total_reward = (
+            0.15 * distance_reward + 0.15 * velocity_reward + 0.7 * distance_traveled
+        )
+
+        self.last_position = self.position
 
         return total_reward

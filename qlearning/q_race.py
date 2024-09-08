@@ -33,14 +33,14 @@ class QRace(Race):
             episode_reward = 0
             while not done:
 
-                clock.tick(500)
+                clock.tick(120)
 
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         quit()
                         sys.exit()
 
-                action = car.action(current_state)
+                action = car.action_train(current_state)
                 car.update(self.game_map)
                 new_state, reward, done = self.step(car)
                 episode_reward += reward
@@ -52,6 +52,7 @@ class QRace(Race):
                 loss = car.train()
 
             if episode % 100 == 0:
+                print(f"Episode {episode}")
                 print(
-                    f"Episode {episode}, Mean Episode Reward: {episode_reward/100:.2f}, Loss: {loss:.4f} "
+                    f"Mean Episode Reward: {episode_reward/100:.2f}, Loss: {loss:.4f} "
                 )
