@@ -1,4 +1,4 @@
-# RAICE 🏎️🏁
+# RAICE 🤖🏎️🏁
 
 
 (STILL ON DEVELOPMENT)
@@ -20,8 +20,10 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
   <img src="./logos/table.png" width="600" />
 </p>
 
-## CURRENT MAPS
+## RAICE EXMAPLE
+[Videograbación 2024-09-07 18 41 02.webm](https://github.com/user-attachments/assets/9e4e4675-26c9-4c98-85f8-17541c0444e4)
 
+## CURRENT MAPS
 
 | TRACK | IMAGE | READY |
 |----------|----------|----------|
