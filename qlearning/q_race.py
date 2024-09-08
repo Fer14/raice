@@ -54,5 +54,5 @@ class QRace(Race):
             if episode % 100 == 0:
                 print(f"Episode {episode}")
                 print(
-                    f"Mean Episode Reward: {episode_reward/100:.2f}, Loss: {loss:.4f} "
+                    f"Mean Episode Reward: {episode_reward/100:.2f}, Loss: {loss:.4f}, Epsilon: {car.epsilon:.2f} "
                 )
