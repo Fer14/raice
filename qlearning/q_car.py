@@ -43,7 +43,7 @@ class QCar(Car):
         discount_factor=0.99,
         learning_rate=1e-3,
         mini_batch_size=256,
-        update_target_every=40,  # 150
+        update_target_every=50,  # 150
     ):
         super().__init__(position=position, angle=0)
         self.device = device
@@ -237,7 +237,7 @@ class QCar(Car):
             0.1 * distance_reward + 0.1 * velocity_reward + 0.8 * distance_traveled
         )
 
-        # total_reward = 0.7 * distance_reward + 0.3 * velocity_reward
+        total_reward = 0.7 * distance_reward + 0.3 * velocity_reward
 
         self.last_position = self.position
 
