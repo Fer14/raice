@@ -30,7 +30,7 @@ class PGCar(Car):
     def __init__(
         self,
         position=None,
-        device="gpu",
+        device="cuda",
         input_size=5,
         hidden_size=5,
         output_size=4,
@@ -64,8 +64,8 @@ class PGCar(Car):
     def save_policy(self):
         torch.save(self.model.state_dict(), "./policy_gradient/policy.pth")
 
-    # def load_policy(self):
-    #     self.model.load_state_dict(torch.load("policy.pth"))
+    def load_policy(self):
+        self.model.load_state_dict(torch.load("./policy_gradient/policy_best.pth"))
 
     def onpolicy_reset(self):
         self.log_probs = []
@@ -138,7 +138,8 @@ class PGCar(Car):
         self.distance = 0
         # self.alive = True
 
-    def action(self, state):
+    def action(self):
+        state = self.get_data()
 
         action = self.forward(state)
 
