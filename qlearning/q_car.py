@@ -1,7 +1,6 @@
 import torch.optim as optim
 import torch.nn as nn
 import torch
-from torch.distributions import Categorical
 import numpy as np
 import pygame
 from collections import deque
@@ -29,7 +28,7 @@ BORDER_COLOR = (255, 255, 255, 255)  # Color To Crash on Hit
 REPLAY_MEMORY_SIZE = 50000
 MIN_REPLAY_MEMORY_SIZE = 1000
 MIN_EPSILON = 0.1
-EPSILON_DECAY = 0.995
+EPSILON_DECAY = 0.9999
 
 
 class QCar(Car):
@@ -39,11 +38,11 @@ class QCar(Car):
         position=None,
         device="cuda",
         input_size=5,
-        hidden_size=5,  # TODO BAJARLE COMPLEJIDAD
+        hidden_size=5,
         output_size=4,
         discount_factor=0.99,
         learning_rate=1e-3,
-        mini_batch_size=64,
+        mini_batch_size=256,
         update_target_every=40,  # 150
     ):
         super().__init__(position=position, angle=0)
@@ -83,7 +82,6 @@ class QCar(Car):
             nn.Linear(input_size, hidden_size),
             nn.ReLU(),
             nn.Linear(hidden_size, output_size),
-            nn.Softmax(dim=-1),
         )
         if not trainable:
             for param in model.parameters():
@@ -123,7 +121,7 @@ class QCar(Car):
         torch.save(self.model.state_dict(), "./qlearning/qpolicy.pth")
 
     def load(self):
-        self.model.load_state_dict(torch.load("./qlearning/best2.pth"))
+        self.model.load_state_dict(torch.load("./qlearning/finalqpolicy.pth"))
 
     def train(self):
         if len(self.replay_memory) < MIN_REPLAY_MEMORY_SIZE:
@@ -146,14 +144,19 @@ class QCar(Car):
 
         # Compute Q values
         current_q_values = self.model(states).gather(1, actions.unsqueeze(1)).squeeze(1)
-        next_q_values = self.target_model(new_states).max(1)[0]
+
+        # Use the online network to select actions for the next state
+        next_actions = self.model(new_states).argmax(1).unsqueeze(1)
+
+        next_q_values = self.target_model(new_states).gather(1, next_actions).squeeze(1)
         target_q_values = rewards + self.discount_factor * next_q_values * (1 - dones)
 
         loss = nn.MSELoss()(current_q_values, target_q_values)
-        # loss = torch.mean(loss)
 
         self.optimizer.zero_grad()
         loss.backward()
+
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
         self.optimizer.step()
 
         # td_errors = (target_q_values - current_q_values).detach().cpu().numpy()
@@ -207,9 +210,9 @@ class QCar(Car):
         action = self.act_race(state)
 
         if action == 0:
-            self.angle += 5  # Left
+            self.angle += 10  # Left
         elif action == 1:
-            self.angle -= 5  # Right
+            self.angle -= 10  # Right
         elif action == 2:
             if self.speed - 2 >= 6:
                 self.speed -= 2  # Slow Down
@@ -221,7 +224,7 @@ class QCar(Car):
     def get_reward(self):
         if self.crashed:
             self.crashed = False
-            return -1000
+            return -100
 
         # Calculate reward based on distance and velocity
         distance_traveled = np.linalg.norm(
@@ -230,10 +233,11 @@ class QCar(Car):
         distance_reward = self.distance / (CAR_SIZE_X / 2)
         velocity_reward = self.speed
 
-        # Combine the rewards (you can adjust the weights)
         total_reward = (
-            0.15 * distance_reward + 0.15 * velocity_reward + 0.7 * distance_traveled
+            0.1 * distance_reward + 0.1 * velocity_reward + 0.8 * distance_traveled
         )
+
+        # total_reward = 0.7 * distance_reward + 0.3 * velocity_reward
 
         self.last_position = self.position
 
