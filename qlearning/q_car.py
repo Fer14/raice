@@ -121,7 +121,7 @@ class QCar(Car):
         torch.save(self.model.state_dict(), "./qlearning/qpolicy.pth")
 
     def load(self):
-        self.model.load_state_dict(torch.load("./qlearning/finalqpolicy.pth"))
+        self.model.load_state_dict(torch.load("./qlearning/bestqpolicy.pth"))
 
     def train(self):
         if len(self.replay_memory) < MIN_REPLAY_MEMORY_SIZE:
@@ -207,7 +207,7 @@ class QCar(Car):
 
         state = self.get_data()
 
-        action = self.act_race(state)
+        action = self.act_epsilon_greedy(state)
 
         if action == 0:
             self.angle += 10  # Left
