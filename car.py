@@ -120,10 +120,11 @@ class Car:
         self.radars.append([(x, y), dist])
 
     def update(self, game_map, training=True):
+
         # Set The Speed To 20 For The First Time
         # Only When Having 4 Output Nodes With Speed Up and Down
         if not self.speed_set:
-            self.speed = 20
+            self.speed = 10
             self.speed_set = True
 
         # Get Rotated Sprite And Move Into The Right X-Direction

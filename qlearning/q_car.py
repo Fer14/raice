@@ -198,7 +198,8 @@ class QCar(Car):
             if self.speed - 2 >= 6:
                 self.speed -= 2  # Slow Down
         else:
-            self.speed += 2  # Speed Up
+            if self.speed + 2 <= 12:
+                self.speed += 2  # Speed Up
 
         return action
 

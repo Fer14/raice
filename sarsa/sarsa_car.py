@@ -162,8 +162,7 @@ class SARSACar(Car):
             if self.speed - 2 >= 6:
                 self.speed -= 2  # Slow Down
         else:
-            if self.speed + 2 <= 10:
-                self.speed += 2  # Speed Up
+            self.speed += 2  # Speed Up
 
         return action
 
@@ -181,7 +180,8 @@ class SARSACar(Car):
             if self.speed - 2 >= 6:
                 self.speed -= 2  # Slow Down
         else:
-            self.speed += 2  # Speed Up
+            if self.speed + 2 <= 12:
+                self.speed += 2  # Speed Up
 
         return action
 
