@@ -1,10 +1,12 @@
 import pygame
 import math
+import numpy as np
+from collections import deque
 
 WIDTH = 1920
 HEIGHT = 1080
 
-CAR_SIZE_X = 40
+CAR_SIZE_X = 30
 CAR_SIZE_Y = 30
 
 BORDER_COLOR = (255, 255, 255, 255)  # Color To Crash on Hit
@@ -34,6 +36,11 @@ class Car:
 
         self.distance = 0  # Distance Driven
         self.time = 0  # Time Passed
+        self.laps = 0
+        self.last_position = self.position
+        self.last_positions = deque(maxlen=10)
+        self.last_angles = deque(maxlen=10)
+        self.crashed = False
 
     def draw(self, screen, draw_radar=False):
         screen.blit(self.rotated_sprite, self.position)  # Draw Sprite
@@ -47,7 +54,7 @@ class Car:
             pygame.draw.line(screen, (0, 255, 0), self.center, position, 1)
             pygame.draw.circle(screen, (0, 255, 0), position, 5)
 
-    def check_collision(self, game_map):
+    def check_collision(self, game_map, training):
         self.alive = True
         for point in self.corners:
             # If Any Corner Touches Border Color -> Crash
@@ -55,8 +62,29 @@ class Car:
             if (
                 point[0] < 0 or point[0] > WIDTH or point[1] < 0 or point[1] > HEIGHT
             ) or (game_map.get_at((int(point[0]), int(point[1]))) == BORDER_COLOR):
+                self.crashed = True
                 self.alive = False
+                if training:
+                    self.reset_training()
+                else:
+                    self.reset_race()
+
                 break
+
+    def reset_training(self):
+        self.position = self.start_position
+        self.speed = 0
+        self.angle = 0
+        self.distance = 0
+        self.last_position = self.position
+        self.laps = 0
+
+    def reset_race(self):
+        self.crashed_position = self.position
+        self.position = self.last_positions[0]
+        self.angle = self.last_angles[0]
+        self.speed = 0
+        self.last_position = self.position
 
     def check_radar(self, degree, game_map):
         length = 0
@@ -91,7 +119,7 @@ class Car:
         )
         self.radars.append([(x, y), dist])
 
-    def update(self, game_map):
+    def update(self, game_map, training=True):
         # Set The Speed To 20 For The First Time
         # Only When Having 4 Output Nodes With Speed Up and Down
         if not self.speed_set:
@@ -151,12 +179,16 @@ class Car:
         self.corners = [left_top, right_top, left_bottom, right_bottom]
 
         # Check Collisions And Clear Radars
-        self.check_collision(game_map)
+        self.check_collision(game_map, training)
         self.radars.clear()
 
         # From -90 To 120 With Step-Size 45 Check Radar
         for d in range(-90, 120, 45):
             self.check_radar(d, game_map)
+
+        self.last_position = self.position
+        self.last_angles.append(self.angle)
+        self.last_positions.append(self.last_position)
 
     def get_data(self):
         # Get Distances To Border
