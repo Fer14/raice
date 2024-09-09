@@ -52,20 +52,19 @@ class SARSACar(Car):
         self.epsilon = 1
         self.output_size = output_size
 
-        self.sprite = pygame.image.load("./sarsa/car.png").convert()
+        self.sprite = pygame.image.load("./sarsa/car.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (CAR_SIZE_X, CAR_SIZE_Y))
         self.rotated_sprite = self.sprite
 
         self.crashed = False
-        self.last_position = self.position
 
     def create_model(self, input_size, hidden_size, output_size, trainable=True):
         model = nn.Sequential(
             nn.Linear(input_size, hidden_size),
             nn.ReLU(),
             nn.Linear(hidden_size, hidden_size),
-            # nn.ReLU(),
-            # nn.Linear(hidden_size, output_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, output_size),
         )
         if not trainable:
             for param in model.parameters():
@@ -96,7 +95,7 @@ class SARSACar(Car):
         torch.save(self.model.state_dict(), "./sarsa/sarsa_policy.pth")
 
     def load(self):
-        self.model.load_state_dict(torch.load("./sarsa/sarsa_policy.pth"))
+        self.model.load_state_dict(torch.load("./sarsa/best.pth"))
 
     def train(self, state, action, reward, new_state, done):
 
@@ -151,27 +150,6 @@ class SARSACar(Car):
 
         return loss.item()
 
-    def check_collision(self, game_map):
-        self.alive = True
-        for point in self.corners:
-            # If Any Corner Touches Border Color -> Crash
-            # Assumes Rectangle
-            if (
-                point[0] < 0 or point[0] > WIDTH or point[1] < 0 or point[1] > HEIGHT
-            ) or (game_map.get_at((int(point[0]), int(point[1]))) == BORDER_COLOR):
-                self.alive = False
-                self.crashed = True
-                self.reset()
-                break
-
-    def reset(self):
-        self.position = self.start_position
-        self.speed = 0
-        self.angle = 0
-        self.distance = 0
-        self.last_position = self.position
-        self.laps = 0
-
     def action_train(self, state):
 
         action = self.act_epsilon_greedy(state)
@@ -213,18 +191,16 @@ class SARSACar(Car):
             return -100
 
         # Calculate reward based on distance and velocity
-        distance_traveled = np.linalg.norm(
-            np.array(self.position) - np.array(self.last_position)
-        )
+        # distance_traveled = np.linalg.norm(
+        #     np.array(self.position) - np.array(self.last_position)
+        # )
         distance_reward = self.distance / (CAR_SIZE_X / 2)
         velocity_reward = self.speed
 
-        total_reward = (
-            0.1 * distance_reward + 0.1 * velocity_reward + 0.8 * distance_traveled
-        )
+        # total_reward = (
+        #     0.1 * distance_reward + 0.1 * velocity_reward + 0.8 * distance_traveled
+        # )
 
         total_reward = 0.7 * distance_reward + 0.3 * velocity_reward
-
-        self.last_position = self.position
 
         return total_reward

@@ -10,8 +10,8 @@ CAR_SIZE_Y = 30
 
 class SARSARace(Race):
 
-    def __init__(self, start: list[int]) -> None:
-        super().__init__(start)
+    def __init__(self, start: list[int], finnish_line: tuple[int]) -> None:
+        super().__init__(start, finnish_line)
         # calculate the distance between the start and the finish following the black lines
         self.finish = self.start
 
