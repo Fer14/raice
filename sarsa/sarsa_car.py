@@ -39,7 +39,7 @@ class SARSACar(Car):
         hidden_size=5,
         output_size=4,
         discount_factor=0.99,
-        learning_rate=1e-4,
+        learning_rate=5e-3,  # 1e-4,
     ):
         super().__init__(position=position, angle=0)
         self.device = device
@@ -64,8 +64,8 @@ class SARSACar(Car):
             nn.Linear(input_size, hidden_size),
             nn.ReLU(),
             nn.Linear(hidden_size, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, output_size),
+            # nn.ReLU(),
+            # nn.Linear(hidden_size, output_size),
         )
         if not trainable:
             for param in model.parameters():
@@ -170,6 +170,7 @@ class SARSACar(Car):
         self.angle = 0
         self.distance = 0
         self.last_position = self.position
+        self.laps = 0
 
     def action_train(self, state):
 
@@ -183,7 +184,8 @@ class SARSACar(Car):
             if self.speed - 2 >= 6:
                 self.speed -= 2  # Slow Down
         else:
-            self.speed += 2  # Speed Up
+            if self.speed + 2 <= 10:
+                self.speed += 2  # Speed Up
 
         return action
 
@@ -191,7 +193,7 @@ class SARSACar(Car):
 
         state = self.get_data()
 
-        action = self.act_race(state)
+        action = self.act_epsilon_greedy(state)
 
         if action == 0:
             self.angle += 10  # Left
@@ -221,7 +223,7 @@ class SARSACar(Car):
             0.1 * distance_reward + 0.1 * velocity_reward + 0.8 * distance_traveled
         )
 
-        # total_reward = 0.7 * distance_reward + 0.3 * velocity_reward
+        total_reward = 0.7 * distance_reward + 0.3 * velocity_reward
 
         self.last_position = self.position
 
