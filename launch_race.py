@@ -9,6 +9,7 @@ def main():
 
     race = Race(
         start=[1295, 966],
+        finnish_line=[(1230, 927), (1292, 927), (1304, 1024), (1236, 1030)],
     )
 
     car = NeatCar(position=race.start)
