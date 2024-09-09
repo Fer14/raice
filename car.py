@@ -38,8 +38,8 @@ class Car:
         self.time = 0  # Time Passed
         self.laps = 0
         self.last_position = self.position
-        self.last_positions = deque(maxlen=10)
-        self.last_angles = deque(maxlen=10)
+        self.last_positions = deque(maxlen=15)
+        self.last_angles = deque(maxlen=15)
         self.crashed = False
 
     def draw(self, screen, draw_radar=False):
