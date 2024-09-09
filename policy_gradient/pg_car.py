@@ -45,7 +45,7 @@ class PGCar(Car):
         self.optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
         self.discount_factor = discount_factor
 
-        self.sprite = pygame.image.load("./policy_gradient/car.png").convert()
+        self.sprite = pygame.image.load("./policy_gradient/car.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (CAR_SIZE_X, CAR_SIZE_Y))
         self.rotated_sprite = self.sprite
 
@@ -107,36 +107,6 @@ class PGCar(Car):
         self.optimizer.step()
         self.onpolicy_reset()
         return policy_loss.item()
-
-    def check_collision(self, game_map):
-        self.alive = True
-        for point in self.corners:
-            # If Any Corner Touches Border Color -> Crash
-            # Assumes Rectangle
-            if (
-                point[0] < 0 or point[0] > WIDTH or point[1] < 0 or point[1] > HEIGHT
-            ) or (game_map.get_at((int(point[0]), int(point[1]))) == BORDER_COLOR):
-                self.alive = False
-                self.crashed = True
-                self.reset()
-                break
-
-        # Check if the car is crossing the starting line from right to left
-        # if (
-        #     self.position[0] < self.start_position[0]
-        #     and self.angle > 90
-        #     and self.angle < 270
-        # ):
-        #     self.alive = False
-        #     self.crashed = True
-        #     self.reset()
-
-    def reset(self):
-        self.position = self.start_position
-        self.speed = 0
-        self.angle = 0
-        self.distance = 0
-        # self.alive = True
 
     def action(self):
         state = self.get_data()

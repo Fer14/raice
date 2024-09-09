@@ -26,7 +26,7 @@ class NeatCar(Car):
     def __init__(self, net=None, position=None):
         super().__init__(position=position, angle=0)
         self.net = net
-        self.sprite = pygame.image.load("./neat_/car.png").convert()
+        self.sprite = pygame.image.load("./neat_/car.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (CAR_SIZE_X, CAR_SIZE_Y))
         self.rotated_sprite = self.sprite
 

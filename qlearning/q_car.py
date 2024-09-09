@@ -70,7 +70,7 @@ class QCar(Car):
         self.output_size = output_size
         self.update_target_every = update_target_every
 
-        self.sprite = pygame.image.load("./qlearning/car.png").convert()
+        self.sprite = pygame.image.load("./qlearning/car.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (CAR_SIZE_X, CAR_SIZE_Y))
         self.rotated_sprite = self.sprite
 
@@ -167,26 +167,6 @@ class QCar(Car):
 
         return loss.item()
 
-    def check_collision(self, game_map):
-        self.alive = True
-        for point in self.corners:
-            # If Any Corner Touches Border Color -> Crash
-            # Assumes Rectangle
-            if (
-                point[0] < 0 or point[0] > WIDTH or point[1] < 0 or point[1] > HEIGHT
-            ) or (game_map.get_at((int(point[0]), int(point[1]))) == BORDER_COLOR):
-                self.alive = False
-                self.crashed = True
-                self.reset()
-                break
-
-    def reset(self):
-        self.position = self.start_position
-        self.speed = 0
-        self.angle = 0
-        self.distance = 0
-        self.last_position = self.position
-
     def action_train(self, state):
 
         action = self.act_epsilon_greedy(state)
@@ -199,7 +179,8 @@ class QCar(Car):
             if self.speed - 2 >= 6:
                 self.speed -= 2  # Slow Down
         else:
-            self.speed += 2  # Speed Up
+            if self.speed + 2 <= 10:
+                self.speed += 2  # Speed Up
 
         return action
 
