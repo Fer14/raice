@@ -56,7 +56,7 @@ class Race:
                 # self.crashes.append(self.screen.blit(self.crash, car.crashed_position))
                 self.screen.blit(self.crash, car.crashed_position)
 
-        pygame.draw.rect(self.screen, (255, 0, 0), self.finnish_line, 2)
+        # pygame.draw.rect(self.screen, (255, 0, 0), self.finnish_line, 2)
 
         pygame.display.flip()
 
