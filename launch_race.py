@@ -28,8 +28,6 @@ def main():
 
     race.race(cars=[car, car2, car3, car4])
 
-    # race.race([car4])
-
 
 if __name__ == "__main__":
     main()

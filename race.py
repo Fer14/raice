@@ -77,7 +77,7 @@ class Race:
             for car in cars:
                 car.action()
                 car.update(self.game_map, training=False)
-                # self.check_lap(car)
+                self.check_lap(car)
 
             self.draw(cars)
 
@@ -85,6 +85,25 @@ class Race:
 
     def check_lap(self, car: Car):
         car_rect = pygame.Rect(car.position[0], car.position[1], CAR_SIZE_X, CAR_SIZE_Y)
-        if self.finnish_line.contains(car_rect):
-            car.laps += 1
-            print(f"Lap completed! Total laps: {car.laps}")
+        # Check if the car is intersecting with the finish line
+        if self.finnish_line.colliderect(car_rect):
+            # Calculate the direction the car is moving
+            dx = car.position[0] - car.last_positions[car.len_positions - 2][0]
+
+            # Determine if the car is crossing in the correct direction
+            # Adjust these conditions based on your track layout
+            correct_direction = (
+                dx > 0
+            )  # Assuming the car should cross from left to right
+
+            # Check if the car wasn't on the finish line in the last frame
+            if not hasattr(car, "on_finish_line") or not car.on_finish_line:
+                if correct_direction:
+                    car.laps += 1
+                    print(f"Lap completed! Total laps: {car.laps}")
+
+                # Mark that the car is on the finish line
+                car.on_finish_line = True
+        else:
+            # Car is not on the finish line
+            car.on_finish_line = False

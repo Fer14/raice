@@ -14,7 +14,7 @@ BORDER_COLOR = (255, 255, 255, 255)  # Color To Crash on Hit
 
 class Car:
 
-    def __init__(self, position, angle=0, len_positions=15):
+    def __init__(self, position, angle=0, len_positions=20):
 
         # self.position = [690, 740] # Starting Position
         self.position = position
@@ -47,8 +47,6 @@ class Car:
 
         drift = pygame.image.load("./images/drift.png").convert_alpha()
         self.drift = pygame.transform.scale(drift, (20, 40))
-
-        pygame.image.save(self.drift, "drift.png")
 
     def draw(self, screen, draw_radar=False):
         if self.n_drifts_left >= 3 or self.n_drifts_right >= 3:
