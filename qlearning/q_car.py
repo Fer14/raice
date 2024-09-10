@@ -76,6 +76,7 @@ class QCar(Car):
 
         self.crashed = False
         self.last_position = self.position
+        self.name = "DQN"
 
     def create_model(self, input_size, hidden_size, output_size, trainable=True):
         model = nn.Sequential(

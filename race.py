@@ -3,6 +3,7 @@ import sys
 import random
 import os
 from car import Car
+import time
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -12,7 +13,7 @@ CAR_SIZE_Y = 30
 
 class Race:
 
-    def __init__(self, start: list[int, int], finnish_line) -> None:
+    def __init__(self, start: list[int, int], finnish_line, laps: int = 2) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))  # , pygame.FULLSCREEN)
         pygame.display.set_caption("RAICE")
@@ -37,6 +38,9 @@ class Race:
         self.crash = pygame.image.load("./images/smoke.png").convert_alpha()
         self.crash = pygame.transform.scale(self.crash, (50, 50))
 
+        self.laps = laps
+        self.finished_cars = []
+
     def load_random_map(self):
         map_dir = "../maps"  # Directory containing map images
         map_files = [f for f in os.listdir(map_dir) if f.endswith(".png")]
@@ -57,11 +61,16 @@ class Race:
                 self.screen.blit(self.crash, car.crashed_position)
 
         # pygame.draw.rect(self.screen, (255, 0, 0), self.finnish_line, 2)
-
+        self.draw_standings_table(cars + self.finished_cars)
         pygame.display.flip()
 
     def race(self, cars: list[Car]):
         clock = pygame.time.Clock()
+
+        time_init = time.time()
+
+        for car in cars:
+            car.init_time(time_init)
 
         running = True
         while running:
@@ -74,10 +83,15 @@ class Race:
                     raise KeyboardInterrupt("Race interrupted")
 
             # For Each Car Get The Acton It Takes
-            for car in cars:
+            for car in cars[:]:
                 car.action()
                 car.update(self.game_map, training=False)
                 self.check_lap(car)
+
+                if car.laps == self.laps:
+                    print(f"Car has completed all laps: {car.laps}")
+                    self.finished_cars.append(car)
+                    cars.remove(car)
 
             self.draw(cars)
 
@@ -100,10 +114,92 @@ class Race:
             if not hasattr(car, "on_finish_line") or not car.on_finish_line:
                 if correct_direction:
                     car.laps += 1
-                    print(f"Lap completed! Total laps: {car.laps}")
+                    car.lap_times.append(time.time() - car.init_time_)
 
                 # Mark that the car is on the finish line
                 car.on_finish_line = True
         else:
             # Car is not on the finish line
             car.on_finish_line = False
+
+    def draw_standings_table(self, cars: list[Car]):
+        # Sort cars by laps (descending) and then by distance (descending)
+        sorted_cars = sorted(
+            cars,
+            key=lambda car: (
+                -car.laps,
+                car.lap_times[-1] if car.lap_times else float("inf"),
+            ),
+        )
+        # Table settings
+        table_width = 300
+        header_height = 60
+        row_height = 30
+        table_height = min(
+            HEIGHT - 40, header_height + len(cars) * row_height
+        )  # Adjust based on number of cars
+        table_x = WIDTH - table_width - 20
+        table_y = 20
+
+        # Draw table background
+        pygame.draw.rect(
+            self.screen, (17, 75, 95), (table_x, table_y, table_width, table_height)
+        )
+        pygame.draw.rect(
+            self.screen, (0, 0, 0), (table_x, table_y, table_width, table_height), 2
+        )
+
+        # Draw header
+        header_font = pygame.font.SysFont("Arial", 20, bold=True)
+        header = header_font.render("Race Standings", True, (255, 255, 255))
+        header_2 = header_font.render(f"Total laps: {self.laps}", True, (255, 255, 255))
+        self.screen.blit(header, (table_x + 10, table_y + 5))
+        self.screen.blit(header_2, (table_x + 180, table_y + 5))
+
+        # Draw column titles
+        column_font = pygame.font.SysFont("Arial", 16, bold=True)
+        pos_title = column_font.render("Pos", True, (255, 255, 255))
+        name_title = column_font.render("Name", True, (255, 255, 255))
+        laps_title = column_font.render("Laps", True, (255, 255, 255))
+        dist_title = column_font.render("time", True, (255, 255, 255))
+        self.screen.blit(pos_title, (table_x + 10, table_y + 35))
+        self.screen.blit(name_title, (table_x + 60, table_y + 35))
+        self.screen.blit(laps_title, (table_x + 140, table_y + 35))
+        self.screen.blit(dist_title, (table_x + 200, table_y + 35))
+
+        # Draw standings
+        font = pygame.font.SysFont("Arial", 16)
+        for i, car in enumerate(sorted_cars):
+            y = table_y + (i + 2) * row_height
+            if y + row_height > table_y + table_height:
+                break  # Stop if we run out of space in the table
+
+            # Draw alternating row backgrounds
+            if i % 2 == 0:
+                pygame.draw.rect(
+                    self.screen, (17, 75, 95), (table_x, y, table_width, row_height)
+                )
+            else:
+                pygame.draw.rect(
+                    self.screen, (26, 147, 111), (table_x, y, table_width, row_height)
+                )
+
+            if car.lap_times:
+                last_lap_time = car.lap_times[-1]
+            else:
+                last_lap_time = 0
+
+            pos_text = font.render(f"{i + 1}", True, (255, 255, 255))
+            name_text = font.render(f"{car.name}", True, (255, 255, 255))
+            laps_text = font.render(f"{car.laps}", True, (255, 255, 255))
+            dist_text = font.render(f"{last_lap_time:.2f}", True, (255, 255, 255))
+
+            self.screen.blit(pos_text, (table_x + 10, y + 5))
+            self.screen.blit(name_text, (table_x + 60, y + 5))
+            self.screen.blit(laps_text, (table_x + 140, y + 5))
+            self.screen.blit(dist_text, (table_x + 200, y + 5))
+
+        # Redraw the border to clean up any overflow
+        pygame.draw.rect(
+            self.screen, (0, 0, 0), (table_x, table_y, table_width, table_height), 2
+        )

@@ -29,6 +29,7 @@ class NeatCar(Car):
         self.sprite = pygame.image.load("./neat_/car.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (CAR_SIZE_X, CAR_SIZE_Y))
         self.rotated_sprite = self.sprite
+        self.name = "NEAT"
 
     def load_net(self):
         local_dir = os.path.dirname(__file__)

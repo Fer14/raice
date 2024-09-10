@@ -57,6 +57,7 @@ class SARSACar(Car):
         self.rotated_sprite = self.sprite
 
         self.crashed = False
+        self.name = "SARSA"
 
     def create_model(self, input_size, hidden_size, output_size, trainable=True):
         model = nn.Sequential(

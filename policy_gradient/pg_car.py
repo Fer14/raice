@@ -51,6 +51,7 @@ class PGCar(Car):
 
         self.onpolicy_reset()
         self.crashed = False
+        self.name = "PG"
 
     def create_model(self, input_size, hidden_size, output_size):
         model = nn.Sequential(

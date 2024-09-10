@@ -2,6 +2,7 @@ import pygame
 import math
 import numpy as np
 from collections import deque
+import time
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -47,6 +48,13 @@ class Car:
 
         drift = pygame.image.load("./images/drift.png").convert_alpha()
         self.drift = pygame.transform.scale(drift, (20, 40))
+        self.lap_times = []
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def init_time(self, time):
+        self.init_time_ = time
 
     def draw(self, screen, draw_radar=False):
         if self.n_drifts_left >= 3 or self.n_drifts_right >= 3:
