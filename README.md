@@ -27,7 +27,7 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 </p>
 
 
-## RAICE EXMAPLE
+## ACTUAL RAICE
 [good.webm](https://github.com/user-attachments/assets/d012fcbe-0727-4852-a983-1d64280f9870)
 
 ## CURRENT MAPS
