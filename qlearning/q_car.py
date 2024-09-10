@@ -187,17 +187,24 @@ class QCar(Car):
     def action(self):
 
         state = self.get_data()
-
         action = self.act_epsilon_greedy(state)
 
         if action == 0:
             self.angle += 10  # Left
+            self.n_drifts_left += 1
+            self.n_drifts_right = 0
         elif action == 1:
             self.angle -= 10  # Right
+            self.n_drifts_left = 0
+            self.n_drifts_right += 1
         elif action == 2:
             if self.speed - 2 >= 6:
                 self.speed -= 2  # Slow Down
+            self.n_drifts_right = 0
+            self.n_drifts_left = 0
         else:
+            self.n_drifts_right = 0
+            self.n_drifts_left = 0
             if self.speed + 2 <= 12:
                 self.speed += 2  # Speed Up
 

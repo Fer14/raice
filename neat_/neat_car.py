@@ -62,6 +62,29 @@ class NeatCar(Car):
 
         if choice == 0:
             self.angle += 10  # Left
+            self.n_drifts_left += 1
+            self.n_drifts_right = 0
+        elif choice == 1:
+            self.angle -= 10  # Right
+            self.n_drifts_left = 0
+            self.n_drifts_right += 1
+        elif choice == 2:
+            if self.speed - 2 >= 6:
+                self.speed -= 2  # Slow Down
+            self.n_drifts_right = 0
+            self.n_drifts_left = 0
+        else:
+            self.n_drifts_right = 0
+            self.n_drifts_left = 0
+            self.speed += 2  # Speed Up
+
+    def action_train(self):
+        input = self.get_data()
+        output = self.net.activate(input)
+        choice = output.index(max(output))
+
+        if choice == 0:
+            self.angle += 10  # Left
         elif choice == 1:
             self.angle -= 10  # Right
         elif choice == 2:

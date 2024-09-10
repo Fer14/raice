@@ -22,7 +22,7 @@ class NeatRace(Race):
 
             # For Each Car Get The Acton It Takes
             for car in cars:
-                car.action()
+                car.action_train()
             # Check If Car Is Still Alive
             # Increase Fitness If Yes And Break Loop If Not
             still_alive = 0

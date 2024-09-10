@@ -14,7 +14,7 @@ BORDER_COLOR = (255, 255, 255, 255)  # Color To Crash on Hit
 
 class Car:
 
-    def __init__(self, position, angle=0):
+    def __init__(self, position, angle=0, len_positions=15):
 
         # self.position = [690, 740] # Starting Position
         self.position = position
@@ -38,11 +38,25 @@ class Car:
         self.time = 0  # Time Passed
         self.laps = 0
         self.last_position = self.position
-        self.last_positions = deque(maxlen=15)
-        self.last_angles = deque(maxlen=15)
+        self.last_positions = deque(maxlen=len_positions)
+        self.last_angles = deque(maxlen=len_positions)
         self.crashed = False
+        self.n_drifts_left = 0
+        self.n_drifts_right = 0
+        self.len_positions = len_positions
+
+        drift = pygame.image.load("./images/drift.png").convert_alpha()
+        self.drift = pygame.transform.scale(drift, (20, 40))
+
+        pygame.image.save(self.drift, "drift.png")
 
     def draw(self, screen, draw_radar=False):
+        if self.n_drifts_left >= 3 or self.n_drifts_right >= 3:
+            if len(self.last_positions) >= self.len_positions:
+                screen.blit(
+                    pygame.transform.rotate(self.drift, 90 + self.angle),
+                    self.last_positions[self.len_positions - 2],
+                )
         screen.blit(self.rotated_sprite, self.position)  # Draw Sprite
         if draw_radar:
             self.draw_radar(screen)  # OPTIONAL FOR SENSORS

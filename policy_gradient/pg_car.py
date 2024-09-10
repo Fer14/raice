@@ -108,7 +108,7 @@ class PGCar(Car):
         self.onpolicy_reset()
         return policy_loss.item()
 
-    def action(self):
+    def action_train(self):
         state = self.get_data()
 
         action = self.forward(state)
@@ -121,6 +121,28 @@ class PGCar(Car):
             if self.speed - 2 >= 6:
                 self.speed -= 2  # Slow Down
         else:
+            self.speed += 2  # Speed Up
+
+    def action(self):
+        state = self.get_data()
+        action = self.forward(state)
+
+        if action == 0:
+            self.angle += 10  # Left
+            self.n_drifts_left += 1
+            self.n_drifts_right = 0
+        elif action == 1:
+            self.angle -= 10  # Right
+            self.n_drifts_left = 0
+            self.n_drifts_right += 1
+        elif action == 2:
+            self.n_drifts_right = 0
+            self.n_drifts_left = 0
+            if self.speed - 2 >= 6:
+                self.speed -= 2  # Slow Down
+        else:
+            self.n_drifts_right = 0
+            self.n_drifts_left = 0
             self.speed += 2  # Speed Up
 
     def get_reward(self):

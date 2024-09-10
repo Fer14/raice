@@ -62,7 +62,7 @@ class PGRace(Race):
                         quit()
                         sys.exit()
 
-                car.action(current_state)
+                car.action_train(current_state)
                 car.update(self.game_map)
                 new_state, reward, done = self.step(car)
                 states.append(current_state)
