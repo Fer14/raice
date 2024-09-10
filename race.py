@@ -40,6 +40,8 @@ class Race:
 
         self.laps = laps
         self.finished_cars = []
+        self.logo = pygame.image.load("./logos/small.png").convert()
+        self.logo = pygame.transform.scale(self.logo, (250, 60))
 
     def load_random_map(self):
         map_dir = "../maps"  # Directory containing map images
@@ -132,6 +134,7 @@ class Race:
             ),
         )
         # Table settings
+        logo_height = self.logo.get_height()
         table_width = 300
         header_height = 60
         row_height = 30
@@ -139,7 +142,10 @@ class Race:
             HEIGHT - 40, header_height + len(cars) * row_height
         )  # Adjust based on number of cars
         table_x = WIDTH - table_width - 20
-        table_y = 20
+        table_y = 20 + logo_height
+
+        logo_y = 10  # Padding from the top of the screen
+        self.screen.blit(self.logo, (table_x + 20, logo_y))
 
         # Draw table background
         pygame.draw.rect(
@@ -161,7 +167,7 @@ class Race:
         pos_title = column_font.render("Pos", True, (255, 255, 255))
         name_title = column_font.render("Name", True, (255, 255, 255))
         laps_title = column_font.render("Laps", True, (255, 255, 255))
-        dist_title = column_font.render("time", True, (255, 255, 255))
+        dist_title = column_font.render("Lap time", True, (255, 255, 255))
         self.screen.blit(pos_title, (table_x + 10, table_y + 35))
         self.screen.blit(name_title, (table_x + 60, table_y + 35))
         self.screen.blit(laps_title, (table_x + 140, table_y + 35))
