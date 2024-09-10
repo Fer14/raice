@@ -91,7 +91,6 @@ class Race:
                 self.check_lap(car)
 
                 if car.laps == self.laps:
-                    print(f"Car has completed all laps: {car.laps}")
                     self.finished_cars.append(car)
                     cars.remove(car)
 
@@ -116,7 +115,12 @@ class Race:
             if not hasattr(car, "on_finish_line") or not car.on_finish_line:
                 if correct_direction:
                     car.laps += 1
-                    car.lap_times.append(time.time() - car.init_time_)
+                    if car.lap_times:
+                        car.lap_times.append(
+                            time.time() - (car.init_time_ + car.lap_times[-1])
+                        )
+                    else:
+                        car.lap_times.append(time.time() - car.init_time_)
 
                 # Mark that the car is on the finish line
                 car.on_finish_line = True
