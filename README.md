@@ -39,15 +39,12 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 | 🇧🇭 BAHREIN | ![logo](maps/bahrain2.png) | YES |
 
 
-## NEXT STEPS
+## Next Steps
 
-- [✔] Train PPO
-- [ ] Train A2C
-- [ ] Test all cars in test track
-- [ ] Add more tracks
-- [ ] Create a competition with all tracks
-- [ ] Add a track/circuit creator
-- [ ] Create a reinforcement learning course explaining the project so that you can train and test your own algorithms
-
-
-
+- [✔] Train PPO (Proximal Policy Optimization)
+- [ ] Train A2C (Advantage Actor-Critic)
+- [ ] Test all cars on the test track
+- [ ] Add more tracks for evaluation
+- [ ] Create a competition using all available tracks
+- [ ] Add a track/circuit creator tool
+- [ ] Create a reinforcement learning course explaining the project, with instructions to train and test your own algorithms
