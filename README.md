@@ -36,7 +36,7 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 - `White Cars`: Indicate the use of a Genetic Algorithm. These cars evolve over time through selection, mutation, and crossover, mimicking natural evolution to optimize their behavior. 
 
 
-## ACTUAL RAICE
+## RAICE EXAMPLE
 [Videograbación 2024-09-10 21 21 56.webm](https://github.com/user-attachments/assets/b481bb0c-597f-45b9-bc89-17f69aa6b9c3) 
 
 ## CURRENT MAPS
