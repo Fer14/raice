@@ -109,8 +109,7 @@ class PGCar(Car):
         self.onpolicy_reset()
         return policy_loss.item()
 
-    def action_train(self):
-        state = self.get_data()
+    def action_train(self, state):
 
         action = self.forward(state)
 

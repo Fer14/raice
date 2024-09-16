@@ -13,7 +13,8 @@ def main():
     print("Detected device: ", device)
 
     race = PGRace(
-        start=[1295, 966]
+        start=[1295, 966],
+        finnish_line=[(1230, 927), (1292, 927), (1304, 1024), (1236, 1030)],
     )
     car = PGCar(position=race.start, device=device)
 
