@@ -41,8 +41,8 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 
 ## Next Steps
 
--  Train PPO (Proximal Policy Optimization) [x] 
--  Train A2C (Advantage Actor-Critic) [ ]
+- [ ] Train PPO (Proximal Policy Optimization)
+- [ ] Train A2C (Advantage Actor-Critic)
 - [ ] Test all cars on the test track
 - [ ] Add more tracks for evaluation
 - [ ] Create a competition using all available tracks
