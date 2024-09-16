@@ -17,7 +17,7 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 
 
 <p align="center">
-  <img src="./logos/race.png" width="600" />
+  <img src="./logos/race_no_bg.png" width="600" />
 </p>
 
 - `Blue Cars`: Correspond to Policy-Based Algorithms (e.g., Proximal Policy Optimization, PPO). These agents learn a policy directly by optimizing the expected return, focusing on selecting the best action in each state.
@@ -37,4 +37,17 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 | TRACK | IMAGE | READY |
 |----------|----------|----------|
 | 🇧🇭 BAHREIN | ![logo](maps/bahrain2.png) | YES |
+
+
+## NEXT STEPS
+
+- [✔] Train PPO
+- [ ] Train A2C
+- [ ] Test all cars in test track
+- [ ] Add more tracks
+- [ ] Create a competition with all tracks
+- [ ] Add a track/circuit creator
+- [ ] Create a reinforcement learning course explaining the project so that you can train and test your own algorithms
+
+
 
