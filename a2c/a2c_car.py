@@ -66,12 +66,13 @@ class A2Car(Car):
 
         self.crashed = False
         self.name = "A2C"
+        self.reset_episode()
 
     def save_policy(self):
         torch.save(self.model.state_dict(), "./a2c/policy.pth")
 
     def load_policy(self):
-        self.model.load_state_dict(torch.load("./a2c/policy_best.pth"))
+        self.model.load_state_dict(torch.load("./a2c/best_policy.pth"))
 
     def reset_episode(self):
         self.log_probs = []

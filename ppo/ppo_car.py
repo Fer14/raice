@@ -70,7 +70,7 @@ class PPOCar(Car):
         torch.save(self.model.state_dict(), "./ppo/policy.pth")
 
     def load_policy(self):
-        self.model.load_state_dict(torch.load("./ppo/policy_best.pth"))
+        self.model.load_state_dict(torch.load("./ppo/best_policy.pth"))
 
     def onpolicy_reset(self):
         self.states = []
