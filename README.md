@@ -30,7 +30,8 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 
 
 ## RAICE EXAMPLE
-[Videograbación 2024-09-10 21 21 56.webm](https://github.com/user-attachments/assets/b481bb0c-597f-45b9-bc89-17f69aa6b9c3) 
+[Videograbación 2024-09-21 15 07 26.webm](https://github.com/user-attachments/assets/b8581979-502f-4e1b-b7b0-6c8af95dbe04)
+
 
 ## CURRENT MAPS
 
@@ -43,7 +44,7 @@ RL agents are trained on a custom made racing game. The goal is train multiple a
 
 - [x] Train PPO (Proximal Policy Optimization)
 - [x] Train A2C (Advantage Actor-Critic)
-- [ ] Test all cars on the test track
+- [x] Test all cars on the test track
 - [ ] Add more tracks for evaluation
 - [ ] Create a competition using all available tracks
 - [ ] Add a track/circuit creator tool
