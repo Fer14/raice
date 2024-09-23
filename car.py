@@ -45,6 +45,7 @@ class Car:
         self.n_drifts_left = 0
         self.n_drifts_right = 0
         self.len_positions = len_positions
+        self.radar_lenght = 300
 
         drift = pygame.image.load("./images/drift.png").convert_alpha()
         self.drift = pygame.transform.scale(drift, (20, 40))
@@ -121,7 +122,7 @@ class Car:
         while (
             not (x < 0 or x > WIDTH or y < 0 or y > HEIGHT)
             and not game_map.get_at((x, y)) == BORDER_COLOR
-            and length < 300
+            and length < self.radar_lenght
         ):
             length = length + 1
             x = int(
