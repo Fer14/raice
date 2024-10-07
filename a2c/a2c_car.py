@@ -51,6 +51,7 @@ class A2Car(Car):
         discount_factor=0.99,
         learning_rate=1e-3,  # best is 1e-3
         entropy_weight=0.01,
+        critic_weight=0.5,
     ):
         super().__init__(position=position, angle=0)
         self.device = device
@@ -59,6 +60,7 @@ class A2Car(Car):
 
         self.discount_factor = discount_factor
         self.entropy_weight = entropy_weight
+        self.critic_weight = 0.5
 
         self.sprite = pygame.image.load("./a2c/car.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (CAR_SIZE_X, CAR_SIZE_Y))
@@ -112,7 +114,11 @@ class A2Car(Car):
         critic_loss = advantages.pow(2).mean()
         entropy_loss = -entropies.mean()
 
-        loss = actor_loss + 0.5 * critic_loss + self.entropy_weight * entropy_loss
+        loss = (
+            actor_loss
+            + self.critic_weight * critic_loss
+            + self.entropy_weight * entropy_loss
+        )
 
         self.optimizer.zero_grad()
         loss.backward()
