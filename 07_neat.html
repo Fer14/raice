@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>RAICE &#8212; RL Course</title>
+    <title>NEAT (NeuroEvolution of Augmenting Topologies) &#8212; RL Course</title>
   
   
   
@@ -57,13 +57,10 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '07_neat';</script>
     <link rel="icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Welcome to RAICE!" href="00_introduction.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -146,7 +143,7 @@
     
   
 
-<a class="navbar-brand logo" href="#">
+<a class="navbar-brand logo" href="intro.html">
   
   
   
@@ -177,8 +174,8 @@
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
-            <li class="toctree-l1 current active">
-                <a class="reference internal" href="#">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
                     RAICE
                 </a>
             </li>
@@ -281,7 +278,7 @@
       
       
       
-      <li><a href="https://github.com/Fer14/raice/issues/new?title=Issue%20on%20page%20%2Fintro.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/Fer14/raice/issues/new?title=Issue%20on%20page%20%2F07_neat.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -311,7 +308,7 @@
       
       
       
-      <li><a href="_sources/intro.md" target="_blank"
+      <li><a href="_sources/07_neat.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -321,7 +318,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.md</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -382,7 +379,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -393,11 +392,24 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>RAICE</h1>
+    <h1>NEAT (NeuroEvolution of Augmenting Topologies)</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-of-neat">Overview of NEAT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-neat-process">The NEAT Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-fitness-in-neat">Understanding Fitness in NEAT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts-in-neat">Key Concepts in NEAT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-neat-python-library">Using the NEAT-Python Library</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actual-training">Actual Training</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -407,26 +419,102 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="raice">
-<h1>RAICE<a class="headerlink" href="#raice" title="Link to this heading">#</a></h1>
-<p><img alt="banner" src="_images/big.png" /></p>
-<p>Welcome! These are the materials for RL course, taught by <a class="reference external" href="https://github.com/Fer14">Fernando Cortés</a>.</p>
-<div class="toctree-wrapper compound">
+  <section class="tex2jax_ignore mathjax_ignore" id="neat-neuroevolution-of-augmenting-topologies">
+<h1>NEAT (NeuroEvolution of Augmenting Topologies)<a class="headerlink" href="#neat-neuroevolution-of-augmenting-topologies" title="Link to this heading">#</a></h1>
+<p><img alt="Alt text" src="_images/car4.png" /></p>
+<p>In this lesson, we’ll explore NEAT (NeuroEvolution of Augmenting Topologies), an evolutionary algorithm for generating artificial neural networks. Unlike traditional reinforcement learning methods that update a single network, NEAT evolves a population of networks over time, combining the principles of genetic algorithms with neural network optimization.</p>
+<section id="overview-of-neat">
+<h2>Overview of NEAT<a class="headerlink" href="#overview-of-neat" title="Link to this heading">#</a></h2>
+<p>NEAT is a genetic algorithm that evolves both the topology and the weights of neural networks. It starts with simple networks and gradually adds complexity, allowing it to find a balance between network performance and complexity. This approach can be particularly effective for reinforcement learning tasks where the optimal network structure is not known in advance.</p>
+<p>Key features of NEAT include:</p>
+<ul class="simple">
+<li><p>Direct encoding of network topologies</p></li>
+<li><p>Speciation to protect innovation</p></li>
+<li><p>Historical markings to enable crossover between different topologies</p></li>
+</ul>
+</section>
+<section id="the-neat-process">
+<h2>The NEAT Process<a class="headerlink" href="#the-neat-process" title="Link to this heading">#</a></h2>
+<p>The NEAT algorithm follows these main steps:</p>
+<ol class="arabic simple">
+<li><p>Initialize Population: Create a population of simple neural networks with random weights.</p></li>
+<li><p>Evaluate Fitness: Run each network through the environment and calculate its fitness based on performance.</p></li>
+<li><p>Speciation: Divide the population into species based on topological similarities.</p></li>
+<li><p>Selection: Select the fittest individuals from each species to reproduce.</p></li>
+<li><p>Reproduction: Create offspring through mutation and crossover:</p>
+<ul class="simple">
+<li><p>Mutation: Add/remove nodes or connections, or modify weights</p></li>
+<li><p>Crossover: Combine genes from two parent networks</p></li>
+</ul>
+</li>
+<li><p>Replace: Replace the old population with the new offspring.</p></li>
+<li><p>Repeat: Go back to step 2 and continue for many generations.</p></li>
+</ol>
+</section>
+<section id="understanding-fitness-in-neat">
+<h2>Understanding Fitness in NEAT<a class="headerlink" href="#understanding-fitness-in-neat" title="Link to this heading">#</a></h2>
+<p>In the context of NEAT, fitness is a measure of how well a particular neural network (genome) performs in the given environment. It’s the criterion used to determine which individuals in the population are more likely to survive and reproduce. In our car racing scenario, we will be using the same approach to define fitness as we used to define rewards in previous lessons, since they essentially serve the same purpose in this context.</p>
+</section>
+<section id="key-concepts-in-neat">
+<h2>Key Concepts in NEAT<a class="headerlink" href="#key-concepts-in-neat" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Gene Encoding
+NEAT uses a direct encoding scheme where each gene represents either a node or a connection in the neural network. This allows for easy manipulation of the network structure through genetic operations.</p></li>
+<li><p>Historical Markings
+Each gene is assigned a unique historical marking when it’s created. These markings are used to align genes during crossover, allowing NEAT to perform meaningful crossover between networks with different topologies.</p></li>
+<li><p>Speciation
+To protect innovation, NEAT divides the population into species based on topological similarities. This prevents newly evolved structures from being eliminated before they have a chance to optimize their weights.</p></li>
+<li><p>Complexification
+NEAT starts with minimal networks and gradually adds complexity through mutation. This allows it to find solutions in simple spaces before exploring more complex ones.
+Advantages of NEAT in Reinforcement Learning</p></li>
+</ol>
+<p>Automatic Structure Optimization: NEAT can find both the optimal network structure and weights, which is particularly useful when the best network architecture for a task is unknown.
+Diversity Preservation: Through speciation, NEAT maintains a diverse population, which can help in exploring different strategies in the reinforcement learning environment.
+Scalability: NEAT can scale from simple to complex problems as it adds complexity over time.
+No Backpropagation: As an evolutionary method, NEAT doesn’t require backpropagation, which can be advantageous in certain reinforcement learning scenarios.</p>
+</section>
+<section id="using-the-neat-python-library">
+<h2>Using the NEAT-Python Library<a class="headerlink" href="#using-the-neat-python-library" title="Link to this heading">#</a></h2>
+<p>For our implementation, we’ll be using the NEAT-Python library, which provides a powerful and flexible implementation of the NEAT algorithm. You can find the documentation and installation instructions at <a class="reference external" href="https://neat-python.readthedocs.io/en/latest/">https://neat-python.readthedocs.io/en/latest/</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NeatRace</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="nf">training_race</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cars</span><span class="p">,</span> <span class="n">genomes</span><span class="p">):</span>
+
+        <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">running</span><span class="p">:</span>
+
+            <span class="c1"># For Each Car Get The Acton It Takes</span>
+            <span class="k">for</span> <span class="n">car</span> <span class="ow">in</span> <span class="n">cars</span><span class="p">:</span>
+                <span class="n">car</span><span class="o">.</span><span class="n">action_train</span><span class="p">()</span>
+                
+            <span class="c1"># Check If Car Is Still Alive</span>
+            <span class="c1"># Increase Fitness If Yes And Break Loop If Not</span>
+            <span class="n">still_alive</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">car</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cars</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">car</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                    <span class="n">still_alive</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">car</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_map</span><span class="p">)</span>
+                    <span class="n">genomes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span> <span class="o">+=</span> <span class="n">car</span><span class="o">.</span><span class="n">get_reward</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">still_alive</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">counter</span> <span class="o">==</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">40</span><span class="p">:</span>  <span class="c1"># Stop After About 20 Seconds</span>
+                <span class="k">break</span>
+</pre></div>
 </div>
-<div class="toctree-wrapper compound">
 </div>
-<div class="toctree-wrapper compound">
 </div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
+</section>
+<section id="actual-training">
+<h2>Actual Training<a class="headerlink" href="#actual-training" title="Link to this heading">#</a></h2>
+<p>[INSERT VIDEO OF THE ACTUAL TRAINING]</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -459,21 +547,32 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="right-next"
-       href="00_introduction.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Welcome to RAICE!</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-of-neat">Overview of NEAT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-neat-process">The NEAT Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-fitness-in-neat">Understanding Fitness in NEAT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts-in-neat">Key Concepts in NEAT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-neat-python-library">Using the NEAT-Python Library</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actual-training">Actual Training</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
