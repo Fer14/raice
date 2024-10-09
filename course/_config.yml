@@ -1,6 +1,16 @@
 # In _config.yml
-title: RAICE
+title: RL Course
 author: Fer14
 logo: ../logos/small.png
+
 execute:
   execute_notebooks: force
+copyright : "2024"
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/Fer14/raice  # Online location of your book
+  branch: main  # Which branch of the repository should be used when creating links (optional)
+html:
+  favicon: /favicon.icon
+  use_issues_button: true
+  use_repository_button: true
