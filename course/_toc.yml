@@ -7,16 +7,18 @@ parts:
   - caption: 1. Reinforcement learning
     chapters:
       - file: 01_reinforcement_learning.ipynb
-  - caption: 2. Policy gradients
+  - caption: 2. Policy based 
     chapters:
       - file: 02_policy_gradients.ipynb
-  - caption: 3. Deep Q learning
+  - caption: 3. Value based
     chapters:
       - file: 03_dqn.ipynb
-  - caption: 4. SARSA
-    chapters:
       - file: 04_sarsa.ipynb
-  - caption: 5. Actor - Critic
+  - caption: 4. Combined methods
     chapters:
       - file: 05_a2c.ipynb
+      - file: 06_ppo.ipynb
+  - caption: 7. NEAT (Optional)
+    chapters:
+      - file: 07_neat.ipynb
 
