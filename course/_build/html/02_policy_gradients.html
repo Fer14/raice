@@ -1,0 +1,683 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Policy gradients (Reinforce) &#8212; RAICE</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '02_policy_gradients';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Q-Learning" href="03_dqn.html" />
+    <link rel="prev" title="Reinforcement Learning" href="01_reinforcement_learning.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/small.png" class="logo__image only-light" alt="RAICE - Home"/>
+    <script>document.write(`<img src="_static/small.png" class="logo__image only-dark" alt="RAICE - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    <no title>
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">0. Introduction to the course</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Welcome to RAICE!</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">1. Reinforcement learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_reinforcement_learning.html">Reinforcement Learning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">2. Policy gradients</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Policy gradients (Reinforce)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">3. Deep Q learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="03_dqn.html">Q-Learning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">4. SARSA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_sarsa.html">SARSA (State-Action-Reward-State-Action)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">5. Actor - Critic</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05_a2c.html">A2C (Advantage Actor-Critic)</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/02_policy_gradients.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Policy gradients (Reinforce)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-objective-function">The objective function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-policy-gradient-process">The Policy Gradient Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coding-policy-gradients">Coding Policy Gradients</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actual-training">Actual training</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="policy-gradients-reinforce">
+<h1>Policy gradients (Reinforce)<a class="headerlink" href="#policy-gradients-reinforce" title="Link to this heading">#</a></h1>
+<p><img alt="Alt text" src="_images/car.png" /></p>
+<p>In this lesson, we will be discussing our first algorithm, policy gradients, also known as REINFORCE, which is one of the policy-based algorithms (those that optimize the policy directly).</p>
+<p>For our agent to train, we need to have a policy that updates learning in the environment in a way that maximizes an objective function.</p>
+<section id="the-objective-function">
+<h2>The objective function<a class="headerlink" href="#the-objective-function" title="Link to this heading">#</a></h2>
+<p>First, we need to define the return of a trajectory. A trajectory is simply a sequence of states <span class="math notranslate nohighlight">\(s\)</span>, actions <span class="math notranslate nohighlight">\(a\)</span>, and rewards <span class="math notranslate nohighlight">\(r\)</span> encountered by an agent in the environment as it interacts over time. Formally, a trajectory <span class="math notranslate nohighlight">\(\tau\)</span> is represented as:</p>
+<div class="math notranslate nohighlight">
+\[
+\tau = (s_0, a_0, r_1, s_1, a_1, r_2, \dots, s_T, a_T)
+\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(s_t\)</span> is the state at time step <span class="math notranslate nohighlight">\(t\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_t\)</span> is the action taken at time step <span class="math notranslate nohighlight">\(t\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(r_{t+1}\)</span> is the reward received after taking action <span class="math notranslate nohighlight">\(a_t\)</span> in state <span class="math notranslate nohighlight">\(s_t\)</span>.</p></li>
+</ul>
+<p>The return <span class="math notranslate nohighlight">\(G_t\)</span> of a trajectory is the total accumulated reward starting from time step <span class="math notranslate nohighlight">\(t\)</span> and can be defined as the sum of all rewards obtained from <span class="math notranslate nohighlight">\(t\)</span> to the end of the episode (or trajectory). If the trajectory ends after <span class="math notranslate nohighlight">\(T\)</span> time steps, the return is:</p>
+<div class="math notranslate nohighlight">
+\[
+G_t = r_{t+1} + r_{t+2} + \cdots + r_T
+\]</div>
+<p>In many RL settings, like this one, a discount factor <span class="math notranslate nohighlight">\(\gamma\)</span> (where <span class="math notranslate nohighlight">\(0 \leq \gamma \leq 1\)</span>) is applied to future rewards to account for the fact that rewards obtained earlier in time are usually more valuable than those obtained later. In that case, the return is given by the discounted sum of future rewards:</p>
+<div class="math notranslate nohighlight">
+\[
+G_t = r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \dots + \gamma^{T-t} r_T
+\]</div>
+<p>Or equivalently:
+$<span class="math notranslate nohighlight">\(
+G_t = \sum_{k=0}^{T-t} \gamma^k r_{t+k+1}
+\)</span>$</p>
+<p>This formulation allows the agent to weigh immediate rewards more heavily than distant future rewards, which can be useful in environments with long time horizons.</p>
+<p>In summary, the return of a trajectory is the total discounted reward the agent accumulates from a given time step until the end of the episode.</p>
+<p>Having previously explained the return of a trajectory as the discounted sum of future rewards, we can now define the objective function for policy gradients. The goal is to maximize the expected return over all possible trajectories generated by our policy. This can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[J(θ)=Eτ∼πθ[G(τ)]=∑_τP(τ∣θ)G(τ)\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(J(\theta)\)</span> is the objective function, representing the expected total reward,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau\)</span> is a trajectory, a sequence of states, actions, and rewards,</p></li>
+<li><p><span class="math notranslate nohighlight">\(P(\tau|\theta)\)</span> is the probability of trajectory <span class="math notranslate nohighlight">\(\tau\)</span> occurring under the policy parameterized by <span class="math notranslate nohighlight">\(\theta\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(G(\tau)\)</span> is the return (total reward) accumulated along trajectory <span class="math notranslate nohighlight">\(\tau\)</span>.</p></li>
+</ul>
+<p>This objective function reflects the goal of policy gradients: to optimize the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span> in order to maximize the expected return. By doing so, the agent learns to increase the probability of actions that lead to higher rewards.</p>
+<p>The update rule is derived from the likelihood ratio of actions taken in relation to the rewards they produced. This is done using the log probability of the actions taken during each trajectory:</p>
+<div class="math notranslate nohighlight">
+\[∇θ​J(θ)=∑_τ​P(τ∣θ)G(τ)∇θ​logπθ​(at​∣st​)\]</div>
+<p>This means that we adjust the policy parameters based on how much each action contributes to the return. The agent increases the probability of actions that lead to higher rewards, helping it improve its decisions with every trajectory it experiences.</p>
+<p>To maximize the objective function, we use gradient ascent, which updates the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span> in the direction of the gradient of the objective function. This method increases the objective function by moving in the direction of the steepest ascent.</p>
+<p>Note: Gradient ascent is the opposite of gradient descent, an optimization algorithm that adjusts parameters in the direction of the negative gradient of a loss function to minimize it.</p>
+<div style="display: flex; align-items: center;">
+    <img src="../images/flag.png" alt="Description of the image" style="width: 100px; height: auto;">
+    <h2 style="margin-right: 20px;">Monte Carlo sampling</h1>
+</div><p>In the REINFORCE algorithm, Monte Carlo sampling is used to estimate the return of a trajectory by sampling entire episodes (or trajectories) from the environment.</p>
+<p>The basic process of Monte Carlo sampling in REINFORCE works as follows:</p>
+<p>Sample a trajectory: The agent interacts with the environment by following its current policy, generating a trajectory <span class="math notranslate nohighlight">\(\tau = (s_0, a_0, r_1, s_1, \dots, s_T, a_T)\)</span> until the episode ends.
+Compute the return: For each time step <span class="math notranslate nohighlight">\(t\)</span> in the trajectory, compute the total reward (return) from that point onward:
+$<span class="math notranslate nohighlight">\(
+G_t = \sum_{k=t}^{T} \gamma^{k-t} r_{k}
+\)</span><span class="math notranslate nohighlight">\(
+where \)</span>G_t<span class="math notranslate nohighlight">\( is the return at time step \)</span>t<span class="math notranslate nohighlight">\(, \)</span>\gamma<span class="math notranslate nohighlight">\( is the discount factor, and \)</span>r_k<span class="math notranslate nohighlight">\( is the reward at time step \)</span>k$.</p>
+<p>Update policy parameters: Use the return <span class="math notranslate nohighlight">\(G_t\)</span> as an estimate of the expected reward to update the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span> using the gradient of the log-probability of the taken actions:
+$<span class="math notranslate nohighlight">\(
+\theta \leftarrow \theta + \alpha G_t \nabla_\theta \log \pi_\theta(a_t | s_t)
+\)</span><span class="math notranslate nohighlight">\(
+Here, \)</span>\pi_\theta(a_t | s_t)<span class="math notranslate nohighlight">\( is the probability of taking action \)</span>a_t<span class="math notranslate nohighlight">\( in state \)</span>s_t<span class="math notranslate nohighlight">\( under the current policy, and \)</span>\alpha$ is the learning rate.</p>
+<p>By repeatedly sampling trajectories and updating the policy based on the returns from those samples, the agent improves its policy over time.
+In summary, Monte Carlo sampling allows REINFORCE to estimate the return from actual sampled trajectories, without needing a model of the environment, and to update the policy based on those samples.</p>
+</section>
+<section id="the-policy-gradient-process">
+<h2>The Policy Gradient Process<a class="headerlink" href="#the-policy-gradient-process" title="Link to this heading">#</a></h2>
+<p>The Policy Gradient (REINFORCE) algorithm updates the agent’s policy directly based on the returns from sampled trajectories. The following steps outline how the policy gradient algorithm works in practice:</p>
+<ol class="arabic simple">
+<li><p>Initialize the policy parameters: Start by initializing the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span> randomly. These parameters define the agent’s policy <span class="math notranslate nohighlight">\(\pi_\theta(a | s)\)</span>, which gives the probability of taking action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(s\)</span>.</p></li>
+<li><p>For each episode:</p>
+<ul class="simple">
+<li><p>Observe the current state <span class="math notranslate nohighlight">\(s_0\)</span>.</p></li>
+<li><p>Sample actions from the policy: The agent selects an action <span class="math notranslate nohighlight">\(a_t\)</span> in each state <span class="math notranslate nohighlight">\(s_t\)</span> according to its current policy <span class="math notranslate nohighlight">\(\pi_\theta(a_t | s_t)\)</span>. This involves sampling actions based on the probability distribution defined by the policy.</p></li>
+<li><p>Execute the action and observe the reward <span class="math notranslate nohighlight">\(r_{t+1}\)</span> and the next state <span class="math notranslate nohighlight">\(s_{t+1}\)</span>.</p></li>
+<li><p>Store the rewards and log probabilities of the actions taken throughout the episode.</p></li>
+</ul>
+</li>
+<li><p>Compute the returns: Once the episode is completed, compute the return <span class="math notranslate nohighlight">\(G_t\)</span> for each time step <span class="math notranslate nohighlight">\(t\)</span>, which is the total discounted reward starting from that step:
+$<span class="math notranslate nohighlight">\(
+ G_t = \sum_{k=t}^{T} \gamma^{k-t} r_{k}
+ \)</span>$</p></li>
+<li><p>Update the policy parameters: After collecting the returns, update the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span> using gradient ascent:
+$<span class="math notranslate nohighlight">\(\theta \leftarrow \theta + \alpha G_t \nabla_\theta \log \pi_\theta(a_t | s_t)\)</span>$
+This update moves the policy parameters in the direction that maximizes the expected return.</p></li>
+<li><p>Repeat for many episodes: Over time, as the policy is updated based on the returns of sampled trajectories, the agent’s performance should improve, and the policy will converge to one that maximizes the total reward.</p></li>
+</ol>
+</section>
+<section id="coding-policy-gradients">
+<h2>Coding Policy Gradients<a class="headerlink" href="#coding-policy-gradients" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Categorical</span>
+
+
+<span class="k">class</span> <span class="nc">PGCar</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_model</span><span class="p">()</span> <span class="c1">#1. Intilialize the policy parameters</span>
+
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> 
+        <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">Categorical</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="c1"># Sample actions from the policy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">action</span><span class="p">))</span> <span class="c1"># Store log probabilities of the actions taken</span>
+        <span class="k">return</span> <span class="n">action</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">action_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+
+        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># Execute the action</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">+=</span> <span class="mi">10</span>  <span class="c1"># Left</span>
+        <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">-=</span> <span class="mi">10</span>  <span class="c1"># Right</span>
+        <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">-=</span> <span class="mi">2</span>  <span class="c1"># Slow Down</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">+=</span> <span class="mi">2</span>  <span class="c1"># Speed Up</span>
+
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewards</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+        <span class="n">returns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">future_return</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">rewards</span><span class="p">):</span> <span class="c1"># 3. Compute the discounted return</span>
+            <span class="n">future_return</span> <span class="o">=</span> <span class="n">r</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">future_return</span>
+            <span class="n">returns</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">future_return</span><span class="p">)</span>
+
+        <span class="n">returns</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="n">policy_loss</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">log_prob</span><span class="p">,</span> <span class="n">R</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_probs</span><span class="p">,</span> <span class="n">returns</span><span class="p">):</span>
+            <span class="n">policy_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">log_prob</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span>
+
+        <span class="n">policy_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">policy_loss</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="n">policy_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span> <span class="c1"># Update the policy parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">onpolicy_reset</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">policy_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PGRace</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">training_race</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">car</span><span class="p">:</span> <span class="n">PGCar</span><span class="p">,</span> <span class="n">episodes</span> <span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+
+
+        <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">episodes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="c1">#2. For each episode</span>
+            <span class="n">current_state</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="c1"># Observe the state</span>
+            <span class="n">states</span><span class="p">,</span> <span class="n">rewards</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+
+
+                <span class="n">car</span><span class="o">.</span><span class="n">action_train</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span> <span class="c1">#Sample over actions and execute the action</span>
+                <span class="n">new_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">car</span><span class="p">)</span> <span class="c1"># Observe the new state</span>
+                <span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+
+                <span class="n">current_state</span> <span class="o">=</span> <span class="n">new_state</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="actual-training">
+<h2>Actual training<a class="headerlink" href="#actual-training" title="Link to this heading">#</a></h2>
+<p>[INSERT VIDEO OF THE ACTUAL TRAINING]</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01_reinforcement_learning.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Reinforcement Learning</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="03_dqn.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Q-Learning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-objective-function">The objective function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-policy-gradient-process">The Policy Gradient Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coding-policy-gradients">Coding Policy Gradients</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actual-training">Actual training</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Fer14
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+# In _config.yml
+title: RAICE
+author: Fer14
+logo: ../logos/small.png
+execute:
+  execute_notebooks: force

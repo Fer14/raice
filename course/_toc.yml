@@ -1,0 +1,22 @@
+format: jb-book
+root: intro
+parts:
+  - caption: 0. Introduction to the course
+    chapters:
+      - file: 00_introduction.ipynb
+  - caption: 1. Reinforcement learning
+    chapters:
+      - file: 01_reinforcement_learning.ipynb
+  - caption: 2. Policy gradients
+    chapters:
+      - file: 02_policy_gradients.ipynb
+  - caption: 3. Deep Q learning
+    chapters:
+      - file: 03_dqn.ipynb
+  - caption: 4. SARSA
+    chapters:
+      - file: 04_sarsa.ipynb
+  - caption: 5. Actor - Critic
+    chapters:
+      - file: 05_a2c.ipynb
+
