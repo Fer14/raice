@@ -1,0 +1,702 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Reinforcement Learning &#8212; RAICE</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '01_reinforcement_learning';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Policy gradients (Reinforce)" href="02_policy_gradients.html" />
+    <link rel="prev" title="Welcome to RAICE!" href="00_introduction.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/small.png" class="logo__image only-light" alt="RAICE - Home"/>
+    <script>document.write(`<img src="_static/small.png" class="logo__image only-dark" alt="RAICE - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    <no title>
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">0. Introduction to the course</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Welcome to RAICE!</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">1. Reinforcement learning</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reinforcement Learning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">2. Policy gradients</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="02_policy_gradients.html">Policy gradients (Reinforce)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">3. Deep Q learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="03_dqn.html">Q-Learning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">4. SARSA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_sarsa.html">SARSA (State-Action-Reward-State-Action)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">5. Actor - Critic</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05_a2c.html">A2C (Advantage Actor-Critic)</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/01_reinforcement_learning.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Reinforcement Learning</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-reinforcement-learning">What is Reinforcement Learning?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#raice-an-example-scenario">RAICE: An Example Scenario</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-environment">The Environment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-agent">The Agent</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-state-s">The State <span class="math notranslate nohighlight">\(s\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-actions-a">The Actions <span class="math notranslate nohighlight">\(a\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-reward-r">The Reward <span class="math notranslate nohighlight">\(r\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-vs-exploitation">Exploration vs. Exploitation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-the-agent">Training the Agent</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#on-policy-vs-off-policy-learning">On-Policy vs. Off-Policy Learning</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithms">Algorithms</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="reinforcement-learning">
+<h1>Reinforcement Learning<a class="headerlink" href="#reinforcement-learning" title="Link to this heading">#</a></h1>
+<section id="what-is-reinforcement-learning">
+<h2>What is Reinforcement Learning?<a class="headerlink" href="#what-is-reinforcement-learning" title="Link to this heading">#</a></h2>
+<p>Reinforcement learning (RL) is a subset of machine learning focused on how agents take actions in an environment to maximize rewards. Unlike supervised learning, which relies on labeled data, RL learns through trial and error, where agents receive feedback (rewards or penalties) based on their actions.</p>
+<p>A helpful way to think about reinforcement learning is to compare it to training a puppy. Just like you reward a puppy with treats for good behavior—like sitting or fetching a ball—you can use rewards to encourage the agent to make the right decisions. If the puppy misbehaves, you might scold it to discourage that behavior.</p>
+<p>Similarly, in reinforcement learning, the agent receives positive feedback (rewards) for actions that lead to desired outcomes and negative feedback (penalties) for actions that result in undesirable outcomes. Over time, just as a puppy learns to associate certain behaviors with treats or scoldings, the agent learns to make better decisions to maximize its rewards. This trial-and-error approach helps both the puppy and the agent develop the skills they need to succeed.</p>
+</section>
+<section id="raice-an-example-scenario">
+<h2>RAICE: An Example Scenario<a class="headerlink" href="#raice-an-example-scenario" title="Link to this heading">#</a></h2>
+<p>Imagine we want to train an AI to drive a race car. Instead of feeding it millions of simulations of actual drives and races (which we might not have), we could use RL. The car could receive positive rewards for:</p>
+<ul class="simple">
+<li><p>Increasing its distance on the track</p></li>
+<li><p>Maintaining a high speed</p></li>
+</ul>
+<p>Conversely, if the car crashes, it would be penalized and have to restart, much like a level in a video game.</p>
+<section id="the-environment">
+<h3>The Environment<a class="headerlink" href="#the-environment" title="Link to this heading">#</a></h3>
+<p>In our scenario, we’ll use the Bahrain F1 track as our environment. The track is represented by black and white pixels, with black representing the asphalt and white representing the background.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span><span class="n">ImageDraw</span><span class="p">,</span><span class="n">ImageFont</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="n">track</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;../maps/bahrain2.png&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">700</span><span class="p">,</span><span class="mi">400</span><span class="p">))</span>
+<span class="n">track</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/036dbadba37296aaa378a0e1a02e98fae53c2c7a405d7dc8e92038719240379f.png" src="_images/036dbadba37296aaa378a0e1a02e98fae53c2c7a405d7dc8e92038719240379f.png" />
+</div>
+</div>
+</section>
+<section id="the-agent">
+<h3>The Agent<a class="headerlink" href="#the-agent" title="Link to this heading">#</a></h3>
+<p>Our agent is a car equipped with five sensors positioned at 90, 45, 0, -45, and -90 degrees. These sensors detect nearby walls, providing crucial information about the environment.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the existing image</span>
+<span class="n">car</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;../qlearning/car.png&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span>
+
+<span class="n">center</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">500</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="c1"># Create a draw object</span>
+<span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
+
+<span class="c1"># Define font (default font if not specifying a path)</span>
+<span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">load_default</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+<span class="c1"># Define the angle and text positions</span>
+<span class="n">angle</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">text_positions</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">45</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">center</span> <span class="o">+</span> <span class="mi">200</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">360</span> <span class="o">-</span> <span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="n">d</span><span class="p">))))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">center</span> <span class="o">+</span> <span class="mi">200</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">360</span> <span class="o">-</span> <span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="n">d</span><span class="p">))))</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1"> degrees&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">)</span>  <span class="c1"># Black text</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">line</span><span class="p">([(</span><span class="n">center</span><span class="p">,</span><span class="n">center</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)],</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> 
+
+<span class="c1"># Display the modified image</span>
+<span class="n">display</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/27dd8c8c6303fbaba0a71a6b101435b27200a03bbc67901823830f64ef89680f.png" src="_images/27dd8c8c6303fbaba0a71a6b101435b27200a03bbc67901823830f64ef89680f.png" />
+</div>
+</div>
+</section>
+<section id="the-state-s">
+<h3>The State <span class="math notranslate nohighlight">\(s\)</span><a class="headerlink" href="#the-state-s" title="Link to this heading">#</a></h3>
+<p>In reinforcement learning, a state <span class="math notranslate nohighlight">\(s\)</span> refers to a particular configuration of the environment at a specific moment. It includes all the essential information the agent requires to make decisions about its actions. In this context, the state can encompass various factors, such as the car’s position on the track and its direction. However, the most critical elements will be the sensor readings, as they provide sufficient information for decision-making. This is similar to how humans drive; we primarily rely on what we see in front of us to navigate effectively.</p>
+</section>
+<section id="the-actions-a">
+<h3>The Actions <span class="math notranslate nohighlight">\(a\)</span><a class="headerlink" href="#the-actions-a" title="Link to this heading">#</a></h3>
+<p>The car has four possible actions <span class="math notranslate nohighlight">\(a\)</span> it can take:</p>
+<ol class="arabic simple">
+<li><p><strong>Speeding Up</strong>: The car increases its speed, allowing it to cover more distance quickly.</p></li>
+<li><p><strong>Slowing Down</strong>: The car decreases its speed, which helps in navigating tight corners or avoiding obstacles.</p></li>
+<li><p><strong>Turning Left 30 Degrees</strong>: The car shifts its direction to the left by 30 degrees, enabling it to navigate turns or avoid walls on that side.</p></li>
+<li><p><strong>Turning Right 30 Degrees</strong>: Similarly, the car can turn right by 30 degrees to adjust its trajectory or avoid obstacles on the right side.</p></li>
+</ol>
+<p>These actions allow the car to respond dynamically to its environment and make strategic decisions during the race. As you may be wondering right now, there could be many more, but for now lets keep it simple.</p>
+<p><img alt="Alt text" src="_images/actions.png" /></p>
+</section>
+<section id="the-reward-r">
+<h3>The Reward <span class="math notranslate nohighlight">\(r\)</span><a class="headerlink" href="#the-reward-r" title="Link to this heading">#</a></h3>
+<p>Shaping the reward <span class="math notranslate nohighlight">\(r\)</span> among the actions taken by the car can be quite complicated. It involves iterating through numerous scenarios to determine which actions lead to the best outcomes and how to distribute rewards effectively.</p>
+<p>However, I can provide a method (for free, your welcome) that I have already tested and seems to work:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">reward</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="n">velocity</span><span class="p">):</span>
+    <span class="n">total_reward</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">distance</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">velocity</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The total reward is </span><span class="si">{</span><span class="n">total_reward</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>By using this straightforward approach, such as assigning rewards based on clear metrics—like distance traveled and speed achieved—we can streamline the training. This way, the car can learn more efficiently without the complexities of intricate reward-sharing algorithms.</p>
+<p>For example, let’s say our agent has covered a distance of 10 meters and is traveling at a speed of 10. In this case, our reward will be:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reward</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># The total reward is 10.0</span>
+<span class="n">reward</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># The total reward is 8.5 if we slow down, the reward decreases</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The total reward is 10.0
+The total reward is 8.5
+</pre></div>
+</div>
+</div>
+</div>
+<p>The reward will decrease, which is exactly what we want. Same happens with distance. This decay in reward reinforces the importance of maintaining speed, encouraging the agent to optimize its performance on the track.</p>
+</section>
+<section id="exploration-vs-exploitation">
+<h3>Exploration vs. Exploitation<a class="headerlink" href="#exploration-vs-exploitation" title="Link to this heading">#</a></h3>
+<p>Finally, before we delve into the actual algorithms, it’s important to discuss a key concept: the exploration-exploitation trade-off.</p>
+<p>Consider the scenario of choosing a restaurant for dinner tonight:</p>
+<ul class="simple">
+<li><p>You might opt for a new, trendy restaurant that just opened in your neighborhood. While this choice carries the uncertainty of not knowing whether the food will be enjoyable or if the atmosphere will fit your tastes, it also holds the potential for discovering your new favorite dining spot.</p></li>
+<li><p>Alternatively, you could stick with the restaurant you already love, the one you visit every month. This decision guarantees a satisfying meal because you’re familiar with the menu and know the quality of the food. However, it lacks the excitement of trying something new and doesn’t offer any fresh experiences.</p></li>
+</ul>
+<p>In reinforcement learning, the <strong>exploration-exploitation</strong> trade-off mirrors this restaurant dilemma. The agent faces a choice between exploring new actions that could lead to better outcomes and exploiting known strategies that yield reliable rewards. Exploration allows the agent to gather valuable information about its environment and discover potentially superior actions. However, it may also result in suboptimal performance in the short term. On the other hand, exploitation enables the agent to maximize immediate rewards based on previous experiences, but it can prevent the agent from finding better strategies. Balancing these two approaches is critical for the agent’s long-term success, whether it involves trying new racing lines or fine-tuning speed adjustments in a racing context.</p>
+</section>
+<section id="training-the-agent">
+<h3>Training the Agent<a class="headerlink" href="#training-the-agent" title="Link to this heading">#</a></h3>
+<p>To train the agent, we need it to learn a policy <span class="math notranslate nohighlight">\(π\)</span> (strategy for maximizing rewards). There are several approaches:</p>
+<ol class="arabic simple">
+<li><p><strong>Direct Policy Optimization <span class="math notranslate nohighlight">\(π\)</span></strong>: In this method, we directly optimize the policy itself. The agent learns which actions to take in various states to maximize its cumulative rewards over time.</p></li>
+<li><p><strong>Value Function Learning</strong> : Alternatively, we can learn a value function that estimates the expected value of being in a given state. This function helps the agent understand the potential long-term rewards associated with different states, guiding its decision-making process. This Value function can be seen as a table where we have states as columns and actions as rows. But what if we have many combinations of those? Thats where neural networks comes in. We will have a neural network to learn that value function for us.</p></li>
+<li><p><strong>Model based</strong>. They will not be covered in this course. But essentially they utilize a model of the environment to predict future states and rewards, enabling the agent to plan and make informed decisions by simulating various scenarios before taking actions.</p></li>
+</ol>
+<p>By employing either of these methods, we can effectively train the agent to navigate its environment and achieve its racing goals.</p>
+<p>The formal way to write the value function is as follows:
+$<span class="math notranslate nohighlight">\(v_π(s) = E_π[R_{t+1} + γR_{t+2} + γ^2R_{t+3} + … | S_t = s]\)</span><span class="math notranslate nohighlight">\(
+ This means that the value of a state \)</span>s<span class="math notranslate nohighlight">\( using the policy \)</span>π<span class="math notranslate nohighlight">\( is the expected discounted return starting from state \)</span>s$.</p>
+<p>There are two types of policies</p>
+<ul class="simple">
+<li><p>Deterministic: Always returns the same action for the same state <span class="math notranslate nohighlight">\((a = π(s))\)</span></p></li>
+<li><p>Stochastic: Outputs a probability distribution over actions <span class="math notranslate nohighlight">\((π(a|s) = P[A|s])\)</span></p></li>
+</ul>
+</section>
+<section id="on-policy-vs-off-policy-learning">
+<h3>On-Policy vs. Off-Policy Learning<a class="headerlink" href="#on-policy-vs-off-policy-learning" title="Link to this heading">#</a></h3>
+<p>In reinforcement learning, understanding the difference between on-policy and off-policy learning is essential for effective agent training:</p>
+<ul class="simple">
+<li><p><strong>On-Policy Learning</strong>: The agent learns and improves its policy based on actions taken while interacting with the environment. It evaluates and updates the policy using the same strategy it employs during exploration. An example is SARSA, which leads to consistent learning but may limit exploration of alternative strategies.</p></li>
+<li><p><strong>Off-Policy Learning</strong>: The agent learns a policy from data generated by a different policy, allowing it to explore various strategies without being tied to its current actions. A well-known example is Q-Learning, where the agent updates its value function based on the best possible actions, promoting greater exploration and more efficient learning.</p></li>
+</ul>
+<p>Understanding these differences helps in choosing the right learning approach for specific reinforcement learning scenarios.</p>
+</section>
+</section>
+<section id="algorithms">
+<h2>Algorithms<a class="headerlink" href="#algorithms" title="Link to this heading">#</a></h2>
+<p>Now that we have a foundational understanding of how reinforcement learning operates, let’s explore the driver’s grid—also known as the algorithms we’ll be studying in this course:</p>
+<p><img alt="Alt text" src="_images/race.png" /></p>
+<ul class="simple">
+<li><p>🏁  <strong>Blue Cars</strong>: These represent Policy-Based Algorithms (e.g., Proximal Policy Optimization, PPO). These agents learn a policy directly by optimizing the expected return, focusing on selecting the best action in each state.</p></li>
+<li><p>🏁  <strong>Green Cars</strong>: These correspond to Value-Based Algorithms (e.g., DQN, SARSA). These agents learn to estimate the value of actions and states, aiming to improve decision-making based on long-term expected rewards.</p></li>
+<li><p>🏁  <strong>Both Colors (Blue + Green)</strong>: These cars utilize Hybrid Algorithms that combine both policy-based and value-based approaches, such as Actor-Critic methods, where one part learns the policy and another learns the value function.</p></li>
+<li><p>🏁  <strong>(Optional) White Cars</strong>: Indicate the use of a Genetic Algorithm. These cars evolve over time through selection, mutation, and crossover, mimicking natural evolution to optimize their behavior.</p></li>
+</ul>
+<hr class="docutils" />
+<div style="display: flex; align-items: center;">
+    <img src="../images/flag.png" alt="Description of the image" style="width: 100px; height: auto;">
+    <h3 style="margin-right: 20px;">Markov Decision Process (MDP)</h1>
+</div><p>The Markov property is a cornerstone concept in Markov Decision Processes (MDPs) and reinforcement learning. It can be summarized as follows:
+Markov Property:</p>
+<ul class="simple">
+<li><p>The future state depends solely on the current state and action</p></li>
+<li><p>Past states and actions are irrelevant for predicting the future</p></li>
+<li><p>“The future is independent of the past given the present”</p></li>
+</ul>
+<p>Mathematically: $<span class="math notranslate nohighlight">\(P(S_{t+1} | S_t, A_t) = P(S_{t+1} | S_t, A_t, S_{t-1}, A_{t-1}, ...)\)</span>$</p>
+<p>Key aspects:</p>
+<ul class="simple">
+<li><p>Memoryless: The system doesn’t retain or need information about past states</p></li>
+<li><p>Predictability: Future states can be predicted using only the current state and action</p></li>
+<li><p>Simplification: Significantly reduces the complexity of decision-making processes</p></li>
+<li><p>Mathematical formulation: <span class="math notranslate nohighlight">\(P(S_{t+1} | S_t, A_t) = P(S_{t+1} | S_t, A_t, S_{t-1}, A_{t-1}, ...)\)</span></p></li>
+</ul>
+<p>This property allows for more efficient computations in MDPs and simplifies the design of RL algorithms. However, it may not always perfectly capture all real-world scenarios.
+RL algorithms leverage the Markov property to focus on learning value functions and policies based solely on current states, without considering entire historical trajectories. This greatly reduces computational complexity and memory requirements.
+For problems where historical context is important, techniques like recurrent neural networks or state augmentation can be used to incorporate relevant past information into the current state representation.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="00_introduction.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to RAICE!</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="02_policy_gradients.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Policy gradients (Reinforce)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-reinforcement-learning">What is Reinforcement Learning?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#raice-an-example-scenario">RAICE: An Example Scenario</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-environment">The Environment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-agent">The Agent</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-state-s">The State <span class="math notranslate nohighlight">\(s\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-actions-a">The Actions <span class="math notranslate nohighlight">\(a\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-reward-r">The Reward <span class="math notranslate nohighlight">\(r\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-vs-exploitation">Exploration vs. Exploitation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-the-agent">Training the Agent</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#on-policy-vs-off-policy-learning">On-Policy vs. Off-Policy Learning</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithms">Algorithms</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Fer14
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

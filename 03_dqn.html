@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Q-Learning &#8212; RAICE</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '03_dqn';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SARSA (State-Action-Reward-State-Action)" href="04_sarsa.html" />
+    <link rel="prev" title="Policy gradients (Reinforce)" href="02_policy_gradients.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/small.png" class="logo__image only-light" alt="RAICE - Home"/>
+    <script>document.write(`<img src="_static/small.png" class="logo__image only-dark" alt="RAICE - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    <no title>
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">0. Introduction to the course</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Welcome to RAICE!</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">1. Reinforcement learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_reinforcement_learning.html">Reinforcement Learning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">2. Policy gradients</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="02_policy_gradients.html">Policy gradients (Reinforce)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">3. Deep Q learning</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Q-Learning</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">4. SARSA</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="04_sarsa.html">SARSA (State-Action-Reward-State-Action)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">5. Actor - Critic</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="05_a2c.html">A2C (Advantage Actor-Critic)</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/03_dqn.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Q-Learning</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-q-value-function">The Q-Value Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temporal-difference-learning">Temporal difference learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-q-learning-process">The Q-Learning Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#epsilon-greedy-exploration">Epsilon-Greedy Exploration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#replay-memory">Replay Memory</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#target-network">Target network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coding-deep-q-network">Coding Deep Q-Network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actual-training">Actual training</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="q-learning">
+<h1>Q-Learning<a class="headerlink" href="#q-learning" title="Link to this heading">#</a></h1>
+<p><img alt="Alt text" src="_images/car1.png" /></p>
+<p>In this lesson, we’ll dive into Q-Learning, a popular value-based reinforcement learning algorithm. Unlike policy-based methods (like Policy Gradients), Q-Learning aims to learn the optimal value of state-action pairs to derive a policy indirectly.</p>
+<p>Q-Learning is an off-policy algorithm, meaning it can learn the optimal policy even if the agent takes actions that are not part of that optimal policy during training. In other words, Q-Learning doesn’t rely on the current policy to collect experiences; instead, it learns the best policy by estimating the Q-values for all state-action pairs. This allows the agent to improve its policy based on both exploratory and greedy actions, making it more flexible and efficient.</p>
+<section id="the-q-value-function">
+<h2>The Q-Value Function<a class="headerlink" href="#the-q-value-function" title="Link to this heading">#</a></h2>
+<p>The Q-value, denoted as Q(s,a)Q(s,a), is a measure of the expected cumulative reward the agent can obtain starting from state <span class="math notranslate nohighlight">\(s\)</span>, taking action <span class="math notranslate nohighlight">\(a\)</span>, and then following the optimal policy. Formally, it can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[Q(s,a)=E[Gt∣st=s,at=a]\]</div>
+<p>Where <span class="math notranslate nohighlight">\(Gt\)</span>​ is the total discounted return from time step <span class="math notranslate nohighlight">\(t\)</span> onward.</p>
+<p>The central idea of Q-Learning is to iteratively update the Q-values using the Bellman equation, which we’ll explore in more detail below:
+$<span class="math notranslate nohighlight">\(Q(s,a)←Q(s,a)+α[r+γmax⁡a′Q(s′,a′)−Q(s,a)]\)</span>$</p>
+<p>Here:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(α\)</span> is the learning rate, controlling how much we update the Q-value,</p></li>
+<li><p><span class="math notranslate nohighlight">\(r\)</span> is the reward received after taking action aa in state ss,</p></li>
+<li><p><span class="math notranslate nohighlight">\(s\)</span> is the next state,</p></li>
+<li><p><span class="math notranslate nohighlight">\(γ\)</span> is the discount factor (same as in policy gradients), balancing immediate vs. future rewards,</p></li>
+<li><p><span class="math notranslate nohighlight">\(maxa′​Q(s′,a′)\)</span> is the maximum Q-value of the next state s′s′, assuming the best action is taken in that state.</p></li>
+</ul>
+<p>In simpler terms, the equation adjusts the current Q-value by adding the reward the agent received, plus the best possible future reward (based on the next state). The agent updates its knowledge with each experience, slowly refining its Q-values until it learns the best actions to take in any state.</p>
+</section>
+<section id="temporal-difference-learning">
+<h2>Temporal difference learning<a class="headerlink" href="#temporal-difference-learning" title="Link to this heading">#</a></h2>
+<p>Temporal Difference (TD) Learning is a key component of Q-Learning. It allows an agent to learn from raw experience without waiting for the episode to finish. TD learning updates Q-values incrementally after each action, by bootstrapping from the estimated Q-values of the next state. Unlike Monte Carlo method that we saw in the previous chapter, which wait until the end of an episode to update, TD learning updates at every step, allowing for more immediate adjustments.</p>
+<p>In TD learning, we estimate the Q-value at each step by combining the immediate reward and the estimated value of the next state-action pair. This estimation is known as the TD target:
+$<span class="math notranslate nohighlight">\(TD target=r+γmax⁡a′Q(s′,a′)\)</span>$</p>
+<p>The TD error is the difference between the TD target and the current Q-value estimate:
+$<span class="math notranslate nohighlight">\(TD error=[r+γmax⁡a′Q(s′,a′)−Q(s,a)]\)</span>$</p>
+<p>This error measures how far off the current Q-value is from the expected future rewards. The Q-value is then updated using the TD error as follows:
+$<span class="math notranslate nohighlight">\(Q(s,a)←Q(s,a)+α TD error\)</span>$</p>
+<p>Here:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(α\)</span> is the learning rate, determining how much the Q-value is adjusted in response to the TD error,</p></li>
+<li><p><span class="math notranslate nohighlight">\(γ\)</span> is the discount factor, determining how much future rewards are valued.</p></li>
+</ul>
+<p>In contrast to Monte Carlo methods, which wait until the end of an episode to update values, TD learning updates the Q-value after every step.</p>
+<div style="display: flex; align-items: center;">
+    <img src="../images/flag.png" alt="Description of the image" style="width: 100px; height: auto;">
+    <h2 style="margin-right: 20px;">The Bellman Equation</h1>
+</div><p>The Bellman equation is a recursive formula that expresses the relationship between the value of a state-action pair and the value of the subsequent states. For Q-Learning, the Bellman equation is used to update the Q-values based on the reward from the current step and the expected future rewards from the next state.</p>
+<p>The Bellman equation for Q-values is:
+$<span class="math notranslate nohighlight">\(Q(s,a)=E[r+γmax⁡a′Q(s′,a′)∣s,a]\)</span>$</p>
+<p>This equation shows that the Q-value of a state-action pair <span class="math notranslate nohighlight">\((s,a)\)</span> is equal to the immediate reward <span class="math notranslate nohighlight">\(r\)</span> plus the discounted maximum Q-value of the next state <span class="math notranslate nohighlight">\(s′\)</span>, given that the best action a′a′ is taken in that state.</p>
+<p>When the agent updates its Q-values during training, it uses this Bellman equation in the form of an update rule:</p>
+<div class="math notranslate nohighlight">
+\[Q(s,a)←Q(s,a)+α[r+γa′max​Q(s′,a′)−Q(s,a)]\]</div>
+<p>Here, the term <span class="math notranslate nohighlight">\(r+γmaxa′​Q(s′,a′)\)</span> represents the TD target (the updated estimate of the Q-value), and the difference between this and the current estimate Q(s,a)Q(s,a) is the TD error. This error drives the update, gradually improving the Q-values over time.</p>
+</section>
+<section id="the-q-learning-process">
+<h2>The Q-Learning Process<a class="headerlink" href="#the-q-learning-process" title="Link to this heading">#</a></h2>
+<p>The Q-Learning algorithm works by interacting with the environment, updating Q-values based on experience, and gradually converging to the optimal policy. The process typically follows these steps:</p>
+<ol class="arabic simple">
+<li><p>Initialize Q-values: Start by initializing the Q-table (or function) for all state-action pairs arbitrarily (often to zeros).</p></li>
+<li><p>For each episode and each step:</p>
+<ul class="simple">
+<li><p>Observe the current state <span class="math notranslate nohighlight">\(s\)</span>.</p></li>
+<li><p>Choose an action <span class="math notranslate nohighlight">\(a\)</span> using an exploration strategy like epsilon-greedy:
+With probability <span class="math notranslate nohighlight">\(ϵ\)</span>, choose a random action (exploration),
+Otherwise, choose the action with the highest Q-value (exploitation).</p></li>
+<li><p>Execute action <span class="math notranslate nohighlight">\(a\)</span>, observe the reward <span class="math notranslate nohighlight">\(r\)</span>, and the next state <span class="math notranslate nohighlight">\(s′\)</span>.</p></li>
+<li><p>Update the Q-value for <span class="math notranslate nohighlight">\((s,a)\)</span> using the Bellman equation.</p></li>
+<li><p>Set the current state to <span class="math notranslate nohighlight">\(s′\)</span> and repeat until the episode ends.</p></li>
+</ul>
+</li>
+<li><p>Repeat for many episodes: Over time, the Q-values should converge to the optimal values, and the agent will learn the best policy (the set of actions that maximizes long-term rewards).</p></li>
+</ol>
+</section>
+<section id="epsilon-greedy-exploration">
+<h2>Epsilon-Greedy Exploration<a class="headerlink" href="#epsilon-greedy-exploration" title="Link to this heading">#</a></h2>
+<p>In Q-Learning, a common exploration strategy is the epsilon-greedy approach. This strategy balances exploration (trying new actions) and exploitation (choosing the best-known actions). It works as follows:</p>
+<ul class="simple">
+<li><p>With a probability <span class="math notranslate nohighlight">\(ϵ\)</span>, choose a random action (exploration),</p></li>
+<li><p>With a probability <span class="math notranslate nohighlight">\(1−ϵ\)</span>, choose the action with the highest Q-value (exploitation).</p></li>
+</ul>
+<p>This ensures that the agent explores the environment sufficiently, especially early in training, while gradually shifting towards exploiting its learned policy as ϵϵ decays over time.</p>
+</section>
+<section id="replay-memory">
+<h2>Replay Memory<a class="headerlink" href="#replay-memory" title="Link to this heading">#</a></h2>
+<p>Replay memory is a technique we will be using, where the agent stores past experiences in a memory buffer and reuses them for training. Instead of learning only from consecutive steps, the agent randomly samples past experiences to break correlations and improve learning stability. This allows the agent to learn from a diverse set of experiences and reinforce important information.</p>
+</section>
+<section id="target-network">
+<h2>Target network<a class="headerlink" href="#target-network" title="Link to this heading">#</a></h2>
+<p>In Deep Q-Networks (DQN), the target network is used to stabilize the training process. The Q-network, which estimates the action-value function, is updated at each step based on new experiences. However, if the Q-values were used directly in the Bellman update, they would change too rapidly, leading to high variance and instability in learning. To address this, DQN introduces a target network, which is a copy of the Q-network but with frozen weights. This target network provides stable Q-value targets during training, ensuring that the learning process does not become erratic.</p>
+<p>The target network is updated less frequently than the Q-network, typically every X steps, where X could be a fixed number like 1,000. By periodically copying the weights of the Q-network to the target network, DQN ensures that the Q-value targets are less likely to fluctuate as much between updates. This method helps to prevent feedback loops and improves the stability and convergence of the learning process, allowing the agent to learn more effectively from its experiences.</p>
+</section>
+<section id="coding-deep-q-network">
+<h2>Coding Deep Q-Network<a class="headerlink" href="#coding-deep-q-network" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+
+<span class="k">class</span> <span class="nc">QCar</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_model</span><span class="p">()</span> <span class="c1"># 1. Intiliaze Q values</span>
+
+
+    <span class="k">def</span> <span class="nf">act_epsilon_greedy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_qs</span><span class="p">(</span><span class="n">state</span><span class="p">)))</span>
+
+
+    <span class="k">def</span> <span class="nf">action_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+
+        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">act_epsilon_greedy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="c1">## Choose an action</span>
+
+        <span class="c1"># Execute action</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">+=</span> <span class="mi">10</span>  <span class="c1"># Left</span>
+        <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">-=</span> <span class="mi">10</span>  <span class="c1"># Right</span>
+        <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">-=</span> <span class="mi">2</span>  <span class="c1"># Slow Down</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speed</span> <span class="o">+=</span> <span class="mi">2</span>  <span class="c1"># Speed Up</span>
+
+        <span class="k">return</span> <span class="n">action</span>
+
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">mini_batch</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">replay_memory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_batch_size</span><span class="p">)</span>
+
+        <span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">new_states</span><span class="p">,</span> <span class="n">dones</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">mini_batch</span><span class="p">)</span>
+
+        <span class="n">states</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">states</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">actions</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">rewards</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewards</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">new_states</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_states</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+        <span class="p">)</span>
+        <span class="n">dones</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dones</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># Compute Q values</span>
+        <span class="n">current_q_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">states</span><span class="p">)</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">actions</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Use the online network to select actions for the next state</span>
+        <span class="n">next_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">new_states</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">next_q_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_model</span><span class="p">(</span><span class="n">new_states</span><span class="p">)</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">next_actions</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">target_q_values</span> <span class="o">=</span> <span class="n">rewards</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">next_q_values</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">dones</span><span class="p">)</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()(</span><span class="n">current_q_values</span><span class="p">,</span> <span class="n">target_q_values</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span><span class="c1">#Update the Q-value</span>
+
+        <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">max_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_target_network</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">QRace</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">training_race</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">car</span><span class="p">,</span> <span class="n">episodes</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">episodes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="c1">#2. For each episode </span>
+
+            <span class="n">current_state</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span> <span class="c1"># Observe the current state</span>
+
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                
+                <span class="n">action</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">action_train</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span> <span class="c1"># Choose an action and execute it</span>
+                <span class="n">new_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">car</span><span class="p">)</span> <span class="c1"># Observe the new state</span>
+                <span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+
+                <span class="n">current_state</span> <span class="o">=</span> <span class="n">new_state</span>
+                <span class="n">car</span><span class="o">.</span><span class="n">update_replay_memory</span><span class="p">(</span><span class="n">current_state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
+
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">train</span><span class="p">()</span> <span class="c1">#Update the Q-values</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="actual-training">
+<h2>Actual training<a class="headerlink" href="#actual-training" title="Link to this heading">#</a></h2>
+<p>[INSERT VIDEO OF THE ACTUAL TRAINING]</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="02_policy_gradients.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Policy gradients (Reinforce)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="04_sarsa.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">SARSA (State-Action-Reward-State-Action)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-q-value-function">The Q-Value Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temporal-difference-learning">Temporal difference learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-q-learning-process">The Q-Learning Process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#epsilon-greedy-exploration">Epsilon-Greedy Exploration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#replay-memory">Replay Memory</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#target-network">Target network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coding-deep-q-network">Coding Deep Q-Network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actual-training">Actual training</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Fer14
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
