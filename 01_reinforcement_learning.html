@@ -485,8 +485,8 @@ document.write(`
 <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">45</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">center</span> <span class="o">+</span> <span class="mi">200</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">360</span> <span class="o">-</span> <span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="n">d</span><span class="p">))))</span>
     <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">center</span> <span class="o">+</span> <span class="mi">200</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">360</span> <span class="o">-</span> <span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="n">d</span><span class="p">))))</span>
-    <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1"> degrees&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">)</span>  <span class="c1"># Black text</span>
-    <span class="n">draw</span><span class="o">.</span><span class="n">line</span><span class="p">([(</span><span class="n">center</span><span class="p">,</span><span class="n">center</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)],</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> 
+    <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1"> degrees&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">)</span>  <span class="c1"># Black text</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">line</span><span class="p">([(</span><span class="n">center</span><span class="p">,</span><span class="n">center</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)],</span> <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> 
 
 <span class="c1"># Display the modified image</span>
 <span class="n">display</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
@@ -494,7 +494,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/27dd8c8c6303fbaba0a71a6b101435b27200a03bbc67901823830f64ef89680f.png" src="_images/27dd8c8c6303fbaba0a71a6b101435b27200a03bbc67901823830f64ef89680f.png" />
+<img alt="_images/e6adceb9d3ce281f0c0a26e55fa5e38fcf5d78ae3a612be65b39264394065feb.png" src="_images/e6adceb9d3ce281f0c0a26e55fa5e38fcf5d78ae3a612be65b39264394065feb.png" />
 </div>
 </div>
 </section>
@@ -564,9 +564,12 @@ The total reward is 8.5
 <li><p><strong>Model based</strong>. They will not be covered in this course. But essentially they utilize a model of the environment to predict future states and rewards, enabling the agent to plan and make informed decisions by simulating various scenarios before taking actions.</p></li>
 </ol>
 <p>By employing either of these methods, we can effectively train the agent to navigate its environment and achieve its racing goals.</p>
-<p>The formal way to write the value function is as follows:
-$<span class="math notranslate nohighlight">\(v_π(s) = E_π[R_{t+1} + γR_{t+2} + γ^2R_{t+3} + … | S_t = s]\)</span><span class="math notranslate nohighlight">\(
- This means that the value of a state \)</span>s<span class="math notranslate nohighlight">\( using the policy \)</span>π<span class="math notranslate nohighlight">\( is the expected discounted return starting from state \)</span>s$.</p>
+<p>The formal way to write the value function is as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+v_π(s) = E_π[R_{t+1} + γR_{t+2} + γ^2R_{t+3} + … | S_t = s]
+\]</div>
+<p>This means that the value of a state <span class="math notranslate nohighlight">\(s\)</span> using the policy <span class="math notranslate nohighlight">\(π\)</span> is the expected discounted return starting from state <span class="math notranslate nohighlight">\(s\)</span>.</p>
 <p>There are two types of policies</p>
 <ul class="simple">
 <li><p>Deterministic: Always returns the same action for the same state <span class="math notranslate nohighlight">\((a = π(s))\)</span></p></li>
@@ -604,7 +607,11 @@ Markov Property:</p>
 <li><p>Past states and actions are irrelevant for predicting the future</p></li>
 <li><p>“The future is independent of the past given the present”</p></li>
 </ul>
-<p>Mathematically: $<span class="math notranslate nohighlight">\(P(S_{t+1} | S_t, A_t) = P(S_{t+1} | S_t, A_t, S_{t-1}, A_{t-1}, ...)\)</span>$</p>
+<p>Mathematically:</p>
+<div class="math notranslate nohighlight">
+\[
+P(S_{t+1} | S_t, A_t) = P(S_{t+1} | S_t, A_t, S_{t-1}, A_{t-1}, ...)
+\]</div>
 <p>Key aspects:</p>
 <ul class="simple">
 <li><p>Memoryless: The system doesn’t retain or need information about past states</p></li>

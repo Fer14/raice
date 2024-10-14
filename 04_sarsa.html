@@ -426,8 +426,11 @@ document.write(`
 <section id="the-q-value-function-in-sarsa">
 <h2>The Q-Value Function in SARSA<a class="headerlink" href="#the-q-value-function-in-sarsa" title="Link to this heading">#</a></h2>
 <p>Similar to Q-learning, SARSA aims to learn the Q-value, <span class="math notranslate nohighlight">\(Q(s,a)\)</span>, which is the expected cumulative reward starting from state <span class="math notranslate nohighlight">\(s\)</span>, taking action <span class="math notranslate nohighlight">\(a\)</span>, and following the current policy.</p>
-<p>The key update equation for SARSA is:
-$<span class="math notranslate nohighlight">\(Q(s,a)←Q(s,a)+α[r+γQ(s′,a′)−Q(s,a)]\)</span>$</p>
+<p>The key update equation for SARSA is:</p>
+<div class="math notranslate nohighlight">
+\[
+Q(s,a)←Q(s,a)+α[r+γQ(s′,a′)−Q(s,a)]
+\]</div>
 <p>Here:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(α\)</span> is the learning rate, controlling how much we update the Q-value,</p></li>
@@ -440,16 +443,22 @@ $<span class="math notranslate nohighlight">\(Q(s,a)←Q(s,a)+α[r+γQ(s′,a′
 </section>
 <section id="temporal-difference-learning-in-sarsa">
 <h2>Temporal Difference Learning in SARSA<a class="headerlink" href="#temporal-difference-learning-in-sarsa" title="Link to this heading">#</a></h2>
-<p>Similar to Q-learning, SARSA relies on Temporal Difference (TD) Learning, that is, learning without having to wait for the episode to finnish, but with the difference that SARSA is on-policy. The TD target in SARSA is:
-$<span class="math notranslate nohighlight">\(TD target=r+γQ(s′,a′)\)</span>$</p>
-<p>The TD error, which drives the update, is:
-$<span class="math notranslate nohighlight">\(TD error=[r+γQ(s′,a′)−Q(s,a)]\)</span>$</p>
+<p>Similar to Q-learning, SARSA relies on Temporal Difference (TD) Learning, that is, learning without having to wait for the episode to finnish, but with the difference that SARSA is on-policy. The TD target in SARSA is:</p>
+<div class="math notranslate nohighlight">
+\[
+TD target=r+γQ(s′,a′)
+\]</div>
+<p>The TD error, which drives the update, is:</p>
+<div class="math notranslate nohighlight">
+\[
+TD error=[r+γQ(s′,a′)−Q(s,a)]
+\]</div>
 <p>Again, unlike Q-learning which uses the max Q-value for the next state, SARSA uses the Q-value of the action actually taken by the agent in state <span class="math notranslate nohighlight">\(s′\)</span>.</p>
 </section>
 <section id="the-sarsa-process">
 <h2>The SARSA Process<a class="headerlink" href="#the-sarsa-process" title="Link to this heading">#</a></h2>
 <p>The SARSA algorithm works similarly to Q-learning but updates the Q-values using the actions that the agent actually performs. The process follows these steps:</p>
-<ol class="arabic simple">
+<ol class="arabic">
 <li><p>Initialize Q-values: Start by initializing the Q-table (or function) for all state-action pairs arbitrarily (often to zeros).</p></li>
 <li><p>For each episode and each step:</p>
 <ul class="simple">
@@ -459,8 +468,13 @@ With probability ϵϵ, choose a random action (exploration),
 Otherwise, choose the action with the highest Q-value (exploitation),</p></li>
 <li><p>Execute action <span class="math notranslate nohighlight">\(a\)</span>, observe the reward <span class="math notranslate nohighlight">\(r\)</span>, and the next state <span class="math notranslate nohighlight">\(s′\)</span>,</p></li>
 <li><p>Choose the next action <span class="math notranslate nohighlight">\(a′\)</span> based on the current policy (this is the key difference from Q-learning),</p></li>
-<li><p>Update the Q-value for <span class="math notranslate nohighlight">\((s,a)\)</span> using the SARSA update rule:
-$<span class="math notranslate nohighlight">\(Q(s,a)←Q(s,a)+α[r+γQ(s′,a′)−Q(s,a)]\)</span>$</p></li>
+<li><p>Update the Q-value for <span class="math notranslate nohighlight">\((s,a)\)</span> using the SARSA update rule:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+    Q(s,a)←Q(s,a)+α[r+γQ(s′,a′)−Q(s,a)]
+    \]</div>
+<ul class="simple">
 <li><p>Set the current state to <span class="math notranslate nohighlight">\(s′\)</span>, and the current action to <span class="math notranslate nohighlight">\(a′\)</span>, and repeat until the episode ends.</p></li>
 </ul>
 </li>
