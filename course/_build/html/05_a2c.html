@@ -462,8 +462,11 @@ document.write(`
 <ol class="arabic simple">
 <li><p>Actor Loss (Policy Gradient)</p></li>
 </ol>
-<p>The goal of the actor is to maximize the expected return by adjusting the policy to favor actions that lead to higher rewards. The policy gradient is calculated using the advantage function <span class="math notranslate nohighlight">\(A(s,a)\)</span>:
-$<span class="math notranslate nohighlight">\(Actor Loss=−log⁡π(a∣s)A(s,a)\)</span>$</p>
+<p>The goal of the actor is to maximize the expected return by adjusting the policy to favor actions that lead to higher rewards. The policy gradient is calculated using the advantage function <span class="math notranslate nohighlight">\(A(s,a)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+Actor Loss=−log⁡π(a∣s)A(s,a)
+\]</div>
 <p>Where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(logπ(a∣s)\)</span> is the log probability of taking action aa in state ss under the current policy.</p></li>
@@ -472,8 +475,11 @@ $<span class="math notranslate nohighlight">\(Actor Loss=−log⁡π(a∣s)A(s,a
 <ol class="arabic simple" start="2">
 <li><p>Critic Loss (Value Function)</p></li>
 </ol>
-<p>The critic helps by estimating the value of states. The critic’s goal is to minimize the mean squared error (MSE) between the predicted value and the actual return (bootstrapped from future rewards):
-$<span class="math notranslate nohighlight">\(Critic Loss=(r+γV(s′)−V(s))2\)</span>$</p>
+<p>The critic helps by estimating the value of states. The critic’s goal is to minimize the mean squared error (MSE) between the predicted value and the actual return (bootstrapped from future rewards):</p>
+<div class="math notranslate nohighlight">
+\[
+Critic Loss=(r+γV(s′)−V(s))2
+\]</div>
 <p>Where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(r\)</span> is the reward received from the environment,</p></li>
@@ -484,8 +490,11 @@ $<span class="math notranslate nohighlight">\(Critic Loss=(r+γV(s′)−V(s))2\
 <ol class="arabic simple" start="3">
 <li><p>Total Loss</p></li>
 </ol>
-<p>The total loss is a combination of the actor loss and the critic loss, with an optional entropy bonus to encourage exploration:
-$<span class="math notranslate nohighlight">\(Total Loss=Actor Loss+c1Critic Loss−c2Entropy Bonus\)</span>$</p>
+<p>The total loss is a combination of the actor loss and the critic loss, with an optional entropy bonus to encourage exploration:</p>
+<div class="math notranslate nohighlight">
+\[
+Total Loss=Actor Loss+c1Critic Loss−c2Entropy Bonus
+\]</div>
 <p>Here:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(c1\)</span>​ and <span class="math notranslate nohighlight">\(c2\)</span>​ are hyperparameters that control the contribution of the critic loss and entropy bonus.</p></li>
@@ -497,8 +506,11 @@ $<span class="math notranslate nohighlight">\(Total Loss=Actor Loss+c1Critic Los
 <section id="advantage-function">
 <h3>Advantage Function<a class="headerlink" href="#advantage-function" title="Link to this heading">#</a></h3>
 <p>Unlike Q-learning and SARSA, which directly estimate the action-value function <span class="math notranslate nohighlight">\(Q(s,a)\)</span>, A2C uses the Advantage Function to capture how much better an action is compared to the baseline (i.e., the value of the current state).</p>
-<p>The advantage is calculated as:
-$<span class="math notranslate nohighlight">\(A(s,a)≈r+γV(s′)−V(s)\)</span>$</p>
+<p>The advantage is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[
+A(s,a)≈r+γV(s′)−V(s)
+\]</div>
 <p>This difference between the expected value and the observed return helps stabilize the updates and reduces variance in the gradient estimates.</p>
 </section>
 </section>
