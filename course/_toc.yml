@@ -1,7 +1,7 @@
 format: jb-book
 root: intro
 parts:
-  - caption: 0. Introduction to the course
+  - caption: Introduction to the course
     chapters:
       - file: 00_introduction.ipynb
   - caption: 1. Reinforcement learning
@@ -21,4 +21,7 @@ parts:
   - caption: 7. NEAT (Optional)
     chapters:
       - file: 07_neat.ipynb
+  - caption: 8. Competition
+    chapters:
+      - file: 08_competition.ipynb
 
