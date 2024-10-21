@@ -25,6 +25,20 @@ HEIGHT = 1080
 BORDER_COLOR = (255, 255, 255, 255)  # Color To Crash on Hit
 
 
+class ActorCritic(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(ActorCritic, self).__init__()
+        self.shared = nn.Sequential(nn.Linear(input_size, hidden_size), nn.ReLU())
+        self.actor = nn.Sequential(
+            nn.Linear(hidden_size, output_size), nn.Softmax(dim=-1)
+        )
+        self.critic = nn.Linear(hidden_size, 1)
+
+    def forward(self, x):
+        shared = self.shared(x)
+        return self.actor(shared), self.critic(shared)
+
+
 class PPOCar(Car):
 
     def __init__(
@@ -32,39 +46,37 @@ class PPOCar(Car):
         position=None,
         device="cuda",
         input_size=5,
-        hidden_size=5,
+        hidden_size=64,
         output_size=4,
         discount_factor=0.99,
-        learning_rate=1e-3,  # best is 1e-3
-        epsilon=0.2,  # PPO clipping parameter
-        entropy_coef=0.01,
+        learning_rate=1e-4,
+        epsilon=0.2,
+        entropy_weight=0.01,
+        critic_weight=0.5,
+        ppo_epochs=5,
+        batch_size=64,
     ):
         super().__init__(position=position, angle=0)
         self.device = device
-        self.model = self.create_model(input_size, hidden_size, output_size).to(
+        self.model = self.model = ActorCritic(input_size, hidden_size, output_size).to(
             self.device
         )
         self.optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
         self.discount_factor = discount_factor
         self.epsilon = epsilon
-        self.entropy_coef = entropy_coef
+        self.entropy_weight = entropy_weight
+        self.critic_weight = critic_weight
+
+        self.ppo_epochs = ppo_epochs
+        self.batch_size = batch_size
 
         self.sprite = pygame.image.load("./ppo/car.png").convert_alpha()
         self.sprite = pygame.transform.scale(self.sprite, (CAR_SIZE_X, CAR_SIZE_Y))
         self.rotated_sprite = self.sprite
 
-        self.onpolicy_reset()
+        self.reset_episode()
         self.crashed = False
         self.name = "PPO"
-
-    def create_model(self, input_size, hidden_size, output_size):
-        model = nn.Sequential(
-            nn.Linear(input_size, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, output_size),
-            nn.Softmax(dim=-1),
-        )
-        return model
 
     def save_policy(self):
         torch.save(self.model.state_dict(), "./ppo/policy.pth")
@@ -72,57 +84,97 @@ class PPOCar(Car):
     def load_policy(self):
         self.model.load_state_dict(torch.load("./ppo/best_policy.pth"))
 
-    def onpolicy_reset(self):
+    def reset_episode(self):
         self.states = []
         self.actions = []
         self.log_probs = []
+        self.values = []
+        self.entropies = []
 
     def forward(self, state):
         state = torch.FloatTensor(state).unsqueeze(0).to(self.device)
-        action_probs = self.model(state)
-        dist = Categorical(action_probs)
-        action = dist.sample()
-        log_prob = dist.log_prob(action)
+        probs, value = self.model(state)
+        m = Categorical(probs)
+        action = m.sample()
+        log_prob = m.log_prob(action)
+        entropy = m.entropy()
 
         self.states.append(state)
         self.actions.append(action)
         self.log_probs.append(log_prob)
+        self.values.append(value)
+        self.entropies.append(entropy)
 
         return action.item()
 
-    def compute_returns(self, rewards):
-        R = 0
+    def compute_gae(self, next_value, rewards):
+        gae = 0
         returns = []
-        for r in rewards[::-1]:
-            R = r + self.discount_factor * R
-            returns.insert(0, R)
-        returns = torch.tensor(returns).float().to(self.device)
-        returns = (returns - returns.mean()) / (returns.std() + 1e-8)
+        values = self.values + [next_value]
+        for step in reversed(range(len(rewards))):
+            delta = (
+                rewards[step] + self.discount_factor * values[step + 1] - values[step]
+            )
+            gae = delta + self.discount_factor * 0.95 * gae
+            returns.insert(0, gae + values[step])
         return returns
 
     def train(self, rewards):
-        returns = self.compute_returns(rewards)
+        next_state = torch.FloatTensor(self.get_data()).unsqueeze(0).to(self.device)
+        _, next_value = self.model(next_state)
+        returns = self.compute_gae(next_value, rewards)
+
         states = torch.cat(self.states)
         actions = torch.cat(self.actions)
         old_log_probs = torch.cat(self.log_probs).detach()
+        returns = torch.tensor(returns).to(self.device)
 
-        for _ in range(5):  # PPO update iterations
-            action_probs = self.model(states)
-            dist = Categorical(action_probs)
-            new_log_probs = dist.log_prob(actions)
-            entropy = dist.entropy().mean()
+        advantages = returns - torch.cat(self.values).detach().squeeze()
 
-            ratio = torch.exp(new_log_probs - old_log_probs)
-            surr1 = ratio * returns
-            surr2 = torch.clamp(ratio, 1 - self.epsilon, 1 + self.epsilon) * returns
+        # Normalize advantages
+        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
-            loss = -torch.min(surr1, surr2).mean() - self.entropy_coef * entropy
+        for _ in range(self.ppo_epochs):
+            # Create mini-batches
+            indices = torch.randperm(len(states))
+            for start in range(0, len(states), self.batch_size):
+                end = min(start + self.batch_size, len(states))
+                batch_indices = indices[start:end]
 
-            self.optimizer.zero_grad()
-            loss.backward()
-            self.optimizer.step()
+                batch_states = states[batch_indices]
+                batch_actions = actions[batch_indices]
+                batch_old_log_probs = old_log_probs[batch_indices]
+                batch_returns = returns[batch_indices]
+                batch_advantages = advantages[batch_indices]
 
-        self.onpolicy_reset()
+                probs, values = self.model(batch_states)
+                m = Categorical(probs)
+                new_log_probs = m.log_prob(batch_actions)
+                entropy = m.entropy().mean()
+
+                ratio = torch.exp(new_log_probs - batch_old_log_probs)
+                surr1 = ratio * batch_advantages
+                surr2 = (
+                    torch.clamp(ratio, 1 - self.epsilon, 1 + self.epsilon)
+                    * batch_advantages
+                )
+
+                actor_loss = -torch.min(surr1, surr2).mean()
+                critic_loss = (batch_returns - values.squeeze()).pow(2).mean()
+                entropy_loss = -entropy
+
+                loss = (
+                    actor_loss
+                    + self.critic_weight * critic_loss
+                    + self.entropy_weight * entropy_loss
+                )
+
+                self.optimizer.zero_grad()
+                loss.backward()
+                nn.utils.clip_grad_norm_(self.model.parameters(), 0.5)
+                self.optimizer.step()
+
+        self.reset_episode()
         return loss.item()
 
     def action_train(self, state):
