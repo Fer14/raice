@@ -1,0 +1,177 @@
+Traceback (most recent call last):
+  File "/home/fer/miniconda3/envs/raice/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/fer/miniconda3/envs/raice/lib/python3.10/site-packages/nbclient/client.py", line 1314, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/fer/miniconda3/envs/raice/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+  File "/home/fer/miniconda3/envs/raice/lib/python3.10/asyncio/base_events.py", line 641, in run_until_complete
+    return future.result()
+  File "/home/fer/miniconda3/envs/raice/lib/python3.10/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/home/fer/miniconda3/envs/raice/lib/python3.10/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/fer/miniconda3/envs/raice/lib/python3.10/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from torch import nn
+import torch
+from torch.distributions import Categorical
+
+
+class ActorCritic(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(ActorCritic, self).__init__()
+        self.shared = nn.Sequential(nn.Linear(input_size, hidden_size), nn.ReLU())
+        self.actor = nn.Sequential(
+            nn.Linear(hidden_size, output_size), nn.Softmax(dim=-1)
+        )
+        self.critic = nn.Linear(hidden_size, 1)
+
+    def forward(self, x):
+        shared = self.shared(x)
+        return self.actor(shared), self.critic(shared)
+
+
+class PPOCar(Car):
+
+    def __init__(
+        self,
+        input_size=5,
+        hidden_size=5,
+        output_size=4,
+
+    ):
+        super().__init__()
+        self.model = self.model = ActorCritic(input_size, hidden_size, output_size).to(
+            self.device
+        )
+
+    def reset_episode(self):
+        self.states = []
+        self.actions = []
+        self.log_probs = []
+        self.values = []
+        self.entropies = []
+
+    def forward(self, state):
+        state = torch.FloatTensor(state).unsqueeze(0).to(self.device)
+        probs, value = self.model(state)
+        m = Categorical(probs)
+        action = m.sample()
+        log_prob = m.log_prob(action)
+        entropy = m.entropy()
+
+        self.states.append(state)
+        self.actions.append(action)
+        self.log_probs.append(log_prob)
+        self.values.append(value)
+        self.entropies.append(entropy)
+
+        return action.item()
+
+    def compute_gae(self, next_value, rewards):
+        gae = 0
+        returns = []
+        values = self.values + [next_value]
+        for step in reversed(range(len(rewards))):
+            delta = (
+                rewards[step] + self.discount_factor * values[step + 1] - values[step]
+            )
+            gae = delta + self.discount_factor * 0.95 * gae
+            returns.insert(0, gae + values[step])
+        return returns
+
+    def train(self, rewards):
+        next_state = torch.FloatTensor(self.get_data()).unsqueeze(0).to(self.device)
+        _, next_value = self.model(next_state)
+        returns = self.compute_gae(next_value, rewards)
+
+        states = torch.cat(self.states)
+        actions = torch.cat(self.actions)
+        old_log_probs = torch.cat(self.log_probs).detach()
+        returns = torch.tensor(returns).to(self.device)
+
+        advantages = returns - torch.cat(self.values).detach().squeeze()
+
+        # Normalize advantages
+        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+
+        for _ in range(self.ppo_epochs):
+            # Create mini-batches
+            indices = torch.randperm(len(states))
+            for start in range(0, len(states), self.batch_size):
+                end = min(start + self.batch_size, len(states))
+                batch_indices = indices[start:end]
+
+                batch_states = states[batch_indices]
+                batch_actions = actions[batch_indices]
+                batch_old_log_probs = old_log_probs[batch_indices]
+                batch_returns = returns[batch_indices]
+                batch_advantages = advantages[batch_indices]
+
+                probs, values = self.model(batch_states)
+                m = Categorical(probs)
+                new_log_probs = m.log_prob(batch_actions)
+                entropy = m.entropy().mean()
+
+                ratio = torch.exp(new_log_probs - batch_old_log_probs)
+                surr1 = ratio * batch_advantages
+                surr2 = (
+                    torch.clamp(ratio, 1 - self.epsilon, 1 + self.epsilon)
+                    * batch_advantages
+                )
+
+                actor_loss = -torch.min(surr1, surr2).mean()
+                critic_loss = (batch_returns - values.squeeze()).pow(2).mean()
+                entropy_loss = -entropy
+
+                loss = (
+                    actor_loss
+                    + self.critic_weight * critic_loss
+                    + self.entropy_weight * entropy_loss
+                )
+
+                self.optimizer.zero_grad()
+                loss.backward()
+                nn.utils.clip_grad_norm_(self.model.parameters(), 0.5)
+                self.optimizer.step()
+
+        self.reset_episode()
+        return loss.item()
+
+    def action_train(self, state):
+
+        action = self.forward(state)
+
+        if action == 0:
+            self.angle += 10  # Left
+        elif action == 1:
+            self.angle -= 10  # Right
+        elif action == 2:
+            if self.speed - 2 >= 6:
+                self.speed -= 2  # Slow Down
+        else:
+            self.speed += 2  # Speed Up
+
+        return action
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[1], line 20[0m
+[1;32m     16[0m         shared [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mshared(x)
+[1;32m     17[0m         [38;5;28;01mreturn[39;00m [38;5;28mself[39m[38;5;241m.[39mactor(shared), [38;5;28mself[39m[38;5;241m.[39mcritic(shared)
+[0;32m---> 20[0m [38;5;28;01mclass[39;00m [38;5;21;01mPPOCar[39;00m([43mCar[49m):
+[1;32m     22[0m     [38;5;28;01mdef[39;00m [38;5;21m__init__[39m(
+[1;32m     23[0m         [38;5;28mself[39m,
+[1;32m     24[0m         input_size[38;5;241m=[39m[38;5;241m5[39m,
+[0;32m   (...)[0m
+[1;32m     27[0m 
+[1;32m     28[0m     ):
+[1;32m     29[0m         [38;5;28msuper[39m()[38;5;241m.[39m[38;5;21m__init__[39m()
+
+[0;31mNameError[0m: name 'Car' is not defined
+

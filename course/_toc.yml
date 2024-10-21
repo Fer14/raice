@@ -18,10 +18,10 @@ parts:
     chapters:
       - file: 05_a2c.ipynb
       - file: 06_ppo.ipynb
-  - caption: 7. NEAT (Optional)
+  - caption: 6. NEAT (Optional)
     chapters:
       - file: 07_neat.ipynb
-  - caption: 8. Competition
+  - caption: 7. Competition
     chapters:
       - file: 08_competition.ipynb
 
